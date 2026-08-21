@@ -97,7 +97,7 @@ async def get_event_map(event_id: str):
         rows = await conn.fetch(
             """
             SELECT s.id as seat_id, s.section, s.row_identifier, s.seat_identifier, c.price, c.name as category_name,
-                   COALESCE(sv.status, 'AVAILABLE') as status
+                   COALESCE(sv.status::text, 'AVAILABLE') as status
             FROM seats s
             LEFT JOIN event_seat_categories c ON s.category_id = c.id
             LEFT JOIN seat_status_view sv ON s.id = sv.seat_id
