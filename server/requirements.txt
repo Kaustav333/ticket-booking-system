@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+asyncpg
+python-socketio
+apscheduler
+passlib[bcrypt]
+pyjwt
+qrcode[pil]
+python-multipart
