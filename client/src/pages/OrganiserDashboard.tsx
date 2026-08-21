@@ -84,67 +84,89 @@ export default function OrganiserDashboard() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 py-8 space-y-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Organiser Dashboard</h1>
+    <div className="max-w-7xl mx-auto p-4 py-8 space-y-8 pb-12">
+      <h1 className="text-3xl font-display font-bold text-white mb-8">Organiser Dashboard</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-xl font-bold mb-4">Create New Event</h2>
-          <form onSubmit={handleCreateEvent} className="space-y-4">
+        <div className="bg-navy-800 p-8 rounded-3xl shadow-xl border border-white/5">
+          <h2 className="text-xl font-display font-bold text-white mb-6">Create New Event</h2>
+          <form onSubmit={handleCreateEvent} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium mb-1">Title</label>
-              <input type="text" required value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full border rounded p-2" />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Title</label>
+              <input type="text" required value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Venue</label>
-              <select required value={newEvent.venue_id} onChange={e => setNewEvent({...newEvent, venue_id: e.target.value})} className="w-full border rounded p-2">
+              <label className="block text-sm font-medium text-gray-300 mb-1">Venue</label>
+              <select required value={newEvent.venue_id} onChange={e => setNewEvent({...newEvent, venue_id: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none appearance-none">
                 <option value="">Select Venue...</option>
                 {venues.map(v => (
                   <option key={v.id} value={v.id}>{v.name} ({v.location})</option>
                 ))}
               </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Start Time</label>
-              <input type="datetime-local" required value={newEvent.start_time} onChange={e => setNewEvent({...newEvent, start_time: e.target.value})} className="w-full border rounded p-2" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">Start Time</label>
+                <input type="datetime-local" required value={newEvent.start_time} onChange={e => setNewEvent({...newEvent, start_time: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none [color-scheme:dark]" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-1">End Time</label>
+                <input type="datetime-local" required value={newEvent.end_time} onChange={e => setNewEvent({...newEvent, end_time: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none [color-scheme:dark]" />
+              </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">End Time</label>
-              <input type="datetime-local" required value={newEvent.end_time} onChange={e => setNewEvent({...newEvent, end_time: e.target.value})} className="w-full border rounded p-2" />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Payment Instructions / Bank Details (Optional)</label>
+              <textarea placeholder="e.g. Bank Account No, IFSC, UPI ID" value={newEvent.payment_details} onChange={e => setNewEvent({...newEvent, payment_details: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" rows={3} />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Payment Instructions / Bank Details (Optional)</label>
-              <textarea placeholder="e.g. Bank Account No, IFSC, UPI ID" value={newEvent.payment_details} onChange={e => setNewEvent({...newEvent, payment_details: e.target.value})} className="w-full border rounded p-2" rows={3} />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Payment QR Code Image URL (Optional)</label>
+              <input type="url" placeholder="https://..." value={newEvent.payment_qr_url} onChange={e => setNewEvent({...newEvent, payment_qr_url: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Payment QR Code Image URL (Optional)</label>
-              <input type="url" placeholder="https://..." value={newEvent.payment_qr_url} onChange={e => setNewEvent({...newEvent, payment_qr_url: e.target.value})} className="w-full border rounded p-2" />
-            </div>
-            <button type="submit" className="w-full bg-indigo-600 text-white rounded py-2 hover:bg-indigo-700">Create Event</button>
+            <button type="submit" className="w-full mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full py-3 font-bold hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-0.5">Create Event</button>
           </form>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-xl font-bold mb-4">Your Event Analytics</h2>
-          <div className="space-y-4">
-            {Object.values(summaries).length === 0 && <p className="text-gray-500">No events found.</p>}
+        <div className="bg-navy-800 p-8 rounded-3xl shadow-xl border border-white/5">
+          <h2 className="text-xl font-display font-bold text-white mb-6">Your Event Analytics</h2>
+          <div className="space-y-6">
+            {Object.values(summaries).length === 0 && (
+              <div className="text-center p-8 border border-white/5 rounded-2xl bg-white/5">
+                <p className="text-gray-400">No events found.</p>
+              </div>
+            )}
             {Object.values(summaries).map((sum, idx) => (
-              <div key={idx} className="border border-gray-100 p-4 rounded-lg bg-gray-50">
-                <h3 className="font-bold text-lg mb-2">{sum.title}</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div><span className="text-gray-500">Total Bookings:</span> {sum.total_bookings}</div>
-                  <div><span className="text-gray-500">Confirmed:</span> <span className="text-green-600 font-bold">{sum.confirmed_bookings}</span></div>
-                  <div><span className="text-gray-500">Cancelled:</span> {sum.cancelled_bookings}</div>
-                  <div><span className="text-gray-500">Revenue:</span> <span className="text-indigo-600 font-bold">₹{sum.revenue}</span></div>
+              <div key={idx} className="border border-white/10 p-6 rounded-2xl bg-navy-900/50 hover:border-indigo-500/30 transition-colors">
+                <h3 className="font-display font-bold text-xl text-white mb-4">{sum.title}</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm mb-6">
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Total Bookings</div>
+                    <div className="text-white font-bold text-lg">{sum.total_bookings}</div>
+                  </div>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Confirmed</div>
+                    <div className="text-green-400 font-bold text-lg">{sum.confirmed_bookings}</div>
+                  </div>
+                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
+                    <div className="text-gray-400 text-xs uppercase tracking-wider mb-1">Cancelled</div>
+                    <div className="text-white font-bold text-lg">{sum.cancelled_bookings}</div>
+                  </div>
+                  <div className="bg-indigo-500/10 p-3 rounded-xl border border-indigo-500/20">
+                    <div className="text-indigo-300 text-xs uppercase tracking-wider mb-1">Revenue</div>
+                    <div className="text-indigo-400 font-bold text-lg">₹{sum.revenue}</div>
+                  </div>
                 </div>
                 
-                <div className="mt-4 pt-4 border-t flex space-x-2">
-                  <input type="text" placeholder="Category Name (e.g. VIP)" value={newCategory.name} onChange={e => setNewCategory({...newCategory, name: e.target.value})} className="border rounded p-1 text-sm w-1/3" />
-                  <input type="number" placeholder="Price" value={newCategory.price} onChange={e => setNewCategory({...newCategory, price: Number(e.target.value)})} className="border rounded p-1 text-sm w-1/4" />
-                  <button onClick={() => handleAddCategory(sum.id)} className="bg-indigo-100 text-indigo-700 px-3 py-1 rounded text-sm font-medium">Add Category</button>
-                </div>
-                <div className="mt-2">
-                  <button onClick={() => handleInstantiate(sum.id)} className="w-full bg-green-100 text-green-800 px-3 py-2 rounded text-sm font-medium">Instantiate Venue Seats</button>
+                <div className="space-y-3 pt-4 border-t border-white/10">
+                  <div className="flex space-x-2">
+                    <input type="text" placeholder="Category (e.g. VIP)" value={newCategory.name} onChange={e => setNewCategory({...newCategory, name: e.target.value})} className="bg-navy-900 border border-white/10 rounded-lg p-2 text-sm text-white w-2/5 focus:ring-1 focus:ring-indigo-500 outline-none" />
+                    <input type="number" placeholder="Price" value={newCategory.price || ''} onChange={e => setNewCategory({...newCategory, price: Number(e.target.value)})} className="bg-navy-900 border border-white/10 rounded-lg p-2 text-sm text-white w-1/4 focus:ring-1 focus:ring-indigo-500 outline-none" />
+                    <button onClick={() => handleAddCategory(sum.id)} className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors flex-1">Add Category</button>
+                  </div>
+                  <div>
+                    <button onClick={() => handleInstantiate(sum.id)} className="w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-4 py-3 rounded-lg text-sm font-bold transition-colors">
+                      Instantiate Venue Seats
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

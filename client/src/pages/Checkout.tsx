@@ -78,8 +78,12 @@ export default function Checkout() {
     }
   };
 
-  if (loading) return <div className="p-8 text-center">Loading checkout...</div>;
-  if (error) return <div className="p-8 text-center text-red-600">{error}</div>;
+  if (loading) return (
+    <div className="flex justify-center items-center h-64">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+    </div>
+  );
+  if (error) return <div className="p-8 text-center text-red-400 bg-navy-800 rounded-2xl border border-white/10">{error}</div>;
   if (!booking) return null;
 
   const isExpired = timeLeft === 0 || booking.status !== 'HELD';
@@ -87,58 +91,67 @@ export default function Checkout() {
   const secs = timeLeft !== null ? timeLeft % 60 : 0;
 
   return (
-    <div className="max-w-3xl mx-auto p-4 py-8">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-900">Checkout</h1>
+    <div className="max-w-3xl mx-auto p-4 py-8 relative">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-2xl bg-indigo-600/20 rounded-full blur-[100px] z-0 pointer-events-none"></div>
+      
+      <div className="bg-navy-800 rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="px-8 py-6 border-b border-white/10 bg-white/5 flex justify-between items-center backdrop-blur-sm">
+          <h1 className="text-2xl font-display font-bold text-white">Checkout</h1>
           {booking.status === 'HELD' && timeLeft !== null && (
-            <div className={`px-4 py-2 rounded font-mono font-bold text-lg ${isExpired ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'}`}>
+            <div className={`px-4 py-2 rounded-xl font-mono font-bold text-lg border ${
+              isExpired ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
+            }`}>
               {isExpired ? 'EXPIRED' : `${mins}:${secs.toString().padStart(2, '0')}`}
             </div>
           )}
         </div>
         
-        <div className="p-6 space-y-6">
+        <div className="p-8 space-y-8">
           <div>
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Booking Reference</h3>
-            <p className="text-2xl font-mono font-bold text-gray-900">{booking.booking_reference}</p>
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Booking Reference</h3>
+            <p className="text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">{booking.booking_reference}</p>
           </div>
           
           <div>
-            <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-3">Selected Seats</h3>
-            <div className="divide-y divide-gray-100 border-t border-b border-gray-100">
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Selected Seats</h3>
+            <div className="divide-y divide-white/10 border-t border-b border-white/10">
               {booking.seats.map((seat, idx) => (
-                <div key={idx} className="py-3 flex justify-between items-center">
+                <div key={idx} className="py-4 flex justify-between items-center group">
                   <div>
-                    <p className="font-medium text-gray-900">Section {seat.section}</p>
-                    <p className="text-sm text-gray-500">Row {seat.row_identifier}, Seat {seat.seat_identifier}</p>
+                    <p className="font-bold text-white group-hover:text-indigo-300 transition-colors">Section {seat.section}</p>
+                    <p className="text-sm text-gray-400">Row {seat.row_identifier}, Seat {seat.seat_identifier}</p>
                   </div>
-                  <div className="font-medium text-gray-900">₹{seat.price}</div>
+                  <div className="font-bold text-lg text-white">₹{seat.price}</div>
                 </div>
               ))}
             </div>
           </div>
           
-          <div className="flex justify-between items-center pt-4">
-            <span className="text-lg font-bold text-gray-900">Total Amount</span>
-            <span className="text-2xl font-bold text-indigo-600">₹{booking.total_amount}</span>
+          <div className="flex justify-between items-center pt-2">
+            <span className="text-xl font-display font-bold text-gray-300">Total Amount</span>
+            <span className="text-4xl font-display font-extrabold text-white">₹{booking.total_amount}</span>
           </div>
           
           {(eventData?.payment_details || eventData?.payment_qr_url) && (
-            <div className="bg-indigo-50 rounded-lg p-4 mt-6 border border-indigo-100">
-              <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-3">Payment Instructions</h3>
+            <div className="bg-indigo-900/30 rounded-2xl p-6 mt-8 border border-indigo-500/30">
+              <h3 className="text-sm font-bold text-indigo-300 uppercase tracking-widest mb-4">Payment Instructions</h3>
               {eventData.payment_details && (
-                <div className="whitespace-pre-wrap text-indigo-800 text-sm mb-4">
+                <div className="whitespace-pre-wrap text-indigo-100/80 text-sm mb-6 leading-relaxed font-medium bg-black/20 p-4 rounded-xl">
                   {eventData.payment_details}
                 </div>
               )}
               {eventData.payment_qr_url && (
-                <div className="flex justify-center">
-                  <img src={eventData.payment_qr_url} alt="Payment QR Code" className="max-w-xs rounded shadow-sm" />
+                <div className="flex justify-center mb-6">
+                  <div className="p-4 bg-white rounded-2xl shadow-xl">
+                    <img src={eventData.payment_qr_url} alt="Payment QR Code" className="w-48 h-48 object-cover rounded-xl" />
+                  </div>
                 </div>
               )}
-              <p className="text-xs text-indigo-600 mt-4 text-center">
-                Please complete the payment and then click "Confirm & Pay" below to finalize your booking.
+              <p className="text-sm text-indigo-300/80 text-center flex items-center justify-center gap-2">
+                <svg className="w-5 h-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Complete payment then click confirm below
               </p>
             </div>
           )}
@@ -147,15 +160,15 @@ export default function Checkout() {
             <button
               onClick={handleConfirm}
               disabled={isExpired || confirming}
-              className={`w-full py-4 rounded-lg text-lg font-bold text-white transition shadow-sm
+              className={`w-full py-5 rounded-full text-lg font-bold text-white transition-all transform
                 ${isExpired || confirming 
-                  ? 'bg-gray-400 cursor-not-allowed' 
-                  : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow'}`}
+                  ? 'bg-gray-700 cursor-not-allowed opacity-70' 
+                  : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] hover:-translate-y-1'}`}
             >
               {isExpired ? 'Hold Expired' : confirming ? 'Processing...' : 'Confirm Booking'}
             </button>
           ) : (
-            <div className="w-full py-4 text-center rounded-lg text-lg font-bold bg-gray-100 text-gray-600">
+            <div className="w-full py-5 text-center rounded-full text-lg font-bold bg-white/5 border border-white/10 text-gray-400">
               Booking is {booking.status}
             </div>
           )}

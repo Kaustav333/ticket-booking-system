@@ -78,20 +78,20 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">Admin Observability Dashboard</h1>
+    <div className="space-y-8 pb-12">
+      <h1 className="text-3xl font-display font-bold text-white">Admin Observability Dashboard</h1>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card, idx) => {
           const Icon = card.icon;
           return (
-            <div key={idx} className="bg-white overflow-hidden shadow rounded-lg border border-gray-100 p-5 flex items-center">
-              <div className="flex-shrink-0">
-                <Icon className={`h-8 w-8 ${card.color}`} />
+            <div key={idx} className="bg-navy-800 overflow-hidden shadow-xl rounded-2xl border border-white/5 p-5 flex items-center hover:border-indigo-500/30 transition-colors">
+              <div className={`flex-shrink-0 p-3 rounded-xl bg-white/5 ${card.color}`}>
+                <Icon className={`h-6 w-6`} />
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">{card.title}</dt>
-                  <dd className="text-2xl font-semibold text-gray-900">{card.value}</dd>
+                  <dt className="text-sm font-medium text-gray-400 truncate">{card.title}</dt>
+                  <dd className="text-2xl font-display font-bold text-white">{card.value}</dd>
                 </dl>
               </div>
             </div>
@@ -99,53 +99,53 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-xl font-bold mb-4">Create Venue</h2>
-          <form onSubmit={handleCreateVenue} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-navy-800 p-8 rounded-3xl shadow-xl border border-white/5">
+          <h2 className="text-xl font-display font-bold text-white mb-6">Create Venue</h2>
+          <form onSubmit={handleCreateVenue} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium mb-1">Venue Name</label>
-              <input type="text" required value={newVenue.name} onChange={e => setNewVenue({...newVenue, name: e.target.value})} className="w-full border rounded p-2" />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Venue Name</label>
+              <input type="text" required value={newVenue.name} onChange={e => setNewVenue({...newVenue, name: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Location</label>
-              <input type="text" required value={newVenue.location} onChange={e => setNewVenue({...newVenue, location: e.target.value})} className="w-full border rounded p-2" />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
+              <input type="text" required value={newVenue.location} onChange={e => setNewVenue({...newVenue, location: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
-            <button type="submit" className="w-full bg-indigo-600 text-white rounded py-2 hover:bg-indigo-700">Create</button>
+            <button type="submit" className="w-full mt-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full py-3 font-bold hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-0.5">Create Venue</button>
           </form>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <h2 className="text-xl font-bold mb-4">Add Seats to Venue Layout</h2>
-          <form onSubmit={handleAddSeat} className="space-y-4">
+        <div className="bg-navy-800 p-8 rounded-3xl shadow-xl border border-white/5">
+          <h2 className="text-xl font-display font-bold text-white mb-6">Add Seats to Layout</h2>
+          <form onSubmit={handleAddSeat} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium mb-1">Select Venue</label>
-              <select required value={newSeat.venueId} onChange={e => setNewSeat({...newSeat, venueId: e.target.value})} className="w-full border rounded p-2">
+              <label className="block text-sm font-medium text-gray-300 mb-1">Select Venue</label>
+              <select required value={newSeat.venueId} onChange={e => setNewSeat({...newSeat, venueId: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none appearance-none">
                 <option value="">Select Venue...</option>
                 {venues.map(v => (
                   <option key={v.id} value={v.id}>{v.name}</option>
                 ))}
               </select>
             </div>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-3">
                <div>
-                  <label className="block text-sm font-medium mb-1">Section</label>
-                  <input type="text" required value={newSeat.section} onChange={e => setNewSeat({...newSeat, section: e.target.value})} className="w-full border rounded p-2" />
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Section</label>
+                  <input type="text" required value={newSeat.section} onChange={e => setNewSeat({...newSeat, section: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
                </div>
                <div>
-                  <label className="block text-sm font-medium mb-1">Row</label>
-                  <input type="text" required value={newSeat.row_identifier} onChange={e => setNewSeat({...newSeat, row_identifier: e.target.value})} className="w-full border rounded p-2" />
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Row</label>
+                  <input type="text" required value={newSeat.row_identifier} onChange={e => setNewSeat({...newSeat, row_identifier: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
                </div>
                <div>
-                  <label className="block text-sm font-medium mb-1">Seat</label>
-                  <input type="text" required value={newSeat.seat_identifier} onChange={e => setNewSeat({...newSeat, seat_identifier: e.target.value})} className="w-full border rounded p-2" />
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Seat</label>
+                  <input type="text" required value={newSeat.seat_identifier} onChange={e => setNewSeat({...newSeat, seat_identifier: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
                </div>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Default Category</label>
-              <input type="text" required value={newSeat.default_category} onChange={e => setNewSeat({...newSeat, default_category: e.target.value})} className="w-full border rounded p-2" />
+              <label className="block text-sm font-medium text-gray-300 mb-1">Default Category</label>
+              <input type="text" required value={newSeat.default_category} onChange={e => setNewSeat({...newSeat, default_category: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
-            <button type="submit" className="w-full bg-green-600 text-white rounded py-2 hover:bg-green-700">Add Seat</button>
+            <button type="submit" className="w-full mt-2 bg-white/10 border border-white/10 text-white rounded-full py-3 font-bold hover:bg-white/20 transition-all transform hover:-translate-y-0.5">Add Seat</button>
           </form>
         </div>
       </div>

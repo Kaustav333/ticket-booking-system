@@ -105,25 +105,37 @@ export default function SeatMap() {
   };
 
   const getSeatColor = (status: string, isSelected: boolean) => {
-    if (isSelected) return 'bg-indigo-600 text-white';
+    if (isSelected) return 'bg-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.6)] border-indigo-400 scale-110 z-10';
     switch (status) {
-      case 'AVAILABLE': return 'bg-green-100 hover:bg-green-200 border-green-300 text-green-800 cursor-pointer';
-      case 'HELD': return 'bg-yellow-100 border-yellow-300 text-yellow-800 cursor-not-allowed opacity-60';
-      case 'CONFIRMED': return 'bg-gray-200 border-gray-300 text-gray-500 cursor-not-allowed opacity-40';
-      case 'WAITLIST_OFFERED': return 'bg-orange-100 border-orange-300 text-orange-800 cursor-not-allowed opacity-60';
-      default: return 'bg-gray-100 border-gray-200 text-gray-500';
+      case 'AVAILABLE': return 'bg-teal-500/20 hover:bg-teal-500/40 border-teal-500/50 text-teal-300 cursor-pointer hover:scale-105';
+      case 'HELD': return 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300 cursor-not-allowed opacity-60';
+      case 'CONFIRMED': return 'bg-red-500/10 border-red-500/20 text-red-500/50 cursor-not-allowed opacity-40';
+      case 'WAITLIST_OFFERED': return 'bg-orange-500/20 border-orange-500/50 text-orange-300 cursor-not-allowed opacity-60';
+      default: return 'bg-gray-800 border-gray-700 text-gray-500';
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="flex-1 bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        <h2 className="text-xl font-bold mb-4">Select Your Seats</h2>
-        {error && <div className="mb-4 p-3 bg-red-50 text-red-700 rounded">{error}</div>}
+    <div className="flex flex-col lg:flex-row gap-8 pb-12">
+      <div className="flex-1 bg-navy-800 p-8 rounded-3xl shadow-xl border border-white/5">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-display font-bold text-white">Select Your Seats</h2>
+          
+          <div className="flex space-x-4 text-xs font-medium">
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-teal-500/40 border border-teal-500/50 mr-2"></span>Available</div>
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-yellow-500/40 border border-yellow-500/50 mr-2"></span>Held</div>
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-red-500/20 border border-red-500/20 mr-2"></span>Booked</div>
+          </div>
+        </div>
         
-        <div className="mb-8 p-4 bg-gray-100 text-center text-gray-400 tracking-[0.5em] rounded">STAGE</div>
+        {error && <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl">{error}</div>}
         
-        <div className="grid grid-cols-10 gap-3">
+        <div className="mb-12 relative">
+          <div className="absolute inset-0 bg-gradient-to-t from-violet-600/0 to-violet-600/20 blur-xl"></div>
+          <div className="relative p-3 bg-gradient-to-r from-navy-800 via-white/5 to-navy-800 border-t-2 border-indigo-500/50 text-center text-indigo-300/50 tracking-[0.7em] font-display rounded-t-3xl">STAGE</div>
+        </div>
+        
+        <div className="grid grid-cols-10 gap-3 md:gap-4 max-w-4xl mx-auto">
           {seats.map(seat => {
             const isSelected = selectedSeats.includes(seat.seat_id);
             const isHoveredByOther = presences[seat.seat_id] > 0;
@@ -132,13 +144,13 @@ export default function SeatMap() {
                 key={seat.seat_id}
                 onMouseEnter={() => handleSeatHover(seat.seat_id)}
                 onClick={() => toggleSelection(seat)}
-                className={`relative h-12 w-full border rounded-t-lg flex flex-col items-center justify-center text-xs transition-colors ${getSeatColor(seat.status, isSelected)}`}
+                className={`relative h-10 w-10 md:h-12 md:w-12 border rounded-xl flex flex-col items-center justify-center text-[10px] md:text-xs transition-all duration-200 ${getSeatColor(seat.status, isSelected)}`}
                 title={`${seat.section} Row ${seat.row_identifier} Seat ${seat.seat_identifier} - ₹${seat.price}`}
               >
                 <span className="font-semibold">{seat.row_identifier}{seat.seat_identifier}</span>
                 {isHoveredByOther && (
-                  <span className="absolute -top-2 -right-2 bg-blue-100 rounded-full p-0.5">
-                    <Eye className="h-3 w-3 text-blue-500" />
+                  <span className="absolute -top-1.5 -right-1.5 bg-blue-500/20 rounded-full p-0.5 border border-blue-500/50">
+                    <Eye className="h-3 w-3 text-blue-400" />
                   </span>
                 )}
               </div>
@@ -147,49 +159,56 @@ export default function SeatMap() {
         </div>
       </div>
       
-      <div className="w-full md:w-80 bg-white p-6 rounded-lg shadow-sm border border-gray-200 h-fit">
-        <h3 className="text-lg font-bold mb-4 border-b pb-2">Selection</h3>
-        {selectedSeats.length === 0 ? (
-          <p className="text-gray-500 text-sm">No seats selected.</p>
-        ) : (
-          <div className="space-y-3">
-            {selectedSeats.map(id => {
-              const seat = seats.find(s => s.seat_id === id);
-              return (
-                <div key={id} className="flex justify-between text-sm">
-                  <span>{seat?.row_identifier}{seat?.seat_identifier} ({seat?.category_name})</span>
-                  <span className="font-medium">₹{seat?.price}</span>
-                </div>
-              );
-            })}
-            <div className="border-t pt-3 flex justify-between font-bold">
-              <span>Total</span>
-              <span>
-                ₹{selectedSeats.reduce((sum, id) => {
-                  const s = seats.find(st => st.seat_id === id);
-                  return sum + (s?.price || 0);
-                }, 0)}
-              </span>
+      <div className="w-full lg:w-96 space-y-6">
+        <div className="bg-navy-800 p-6 rounded-3xl shadow-xl border border-white/5">
+          <h3 className="text-xl font-display font-bold text-white mb-6">Selection</h3>
+          {selectedSeats.length === 0 ? (
+            <div className="text-center py-8 text-gray-500 border border-dashed border-white/10 rounded-xl">
+              No seats selected.
             </div>
-            <button 
-              onClick={handleHold}
-              className="w-full mt-4 py-2 bg-indigo-600 text-white rounded font-medium hover:bg-indigo-700 transition"
-            >
-              Hold Seats & Checkout
-            </button>
-          </div>
-        )}
+          ) : (
+            <div className="space-y-4">
+              {selectedSeats.map(id => {
+                const seat = seats.find(s => s.seat_id === id);
+                return (
+                  <div key={id} className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <div>
+                      <div className="font-medium text-white">{seat?.row_identifier}{seat?.seat_identifier}</div>
+                      <div className="text-xs text-gray-400">{seat?.category_name}</div>
+                    </div>
+                    <span className="font-bold text-indigo-300">₹{seat?.price}</span>
+                  </div>
+                );
+              })}
+              <div className="pt-4 mt-4 border-t border-white/10 flex justify-between font-bold text-lg">
+                <span className="text-white">Total</span>
+                <span className="text-indigo-400">
+                  ₹{selectedSeats.reduce((sum, id) => {
+                    const s = seats.find(st => st.seat_id === id);
+                    return sum + (s?.price || 0);
+                  }, 0)}
+                </span>
+              </div>
+              <button 
+                onClick={handleHold}
+                className="w-full mt-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full font-bold hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-0.5"
+              >
+                Hold Seats & Checkout
+              </button>
+            </div>
+          )}
+        </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <h3 className="text-lg font-bold mb-2">Sold Out? Join Waitlist</h3>
-          <p className="text-sm text-gray-500 mb-4">If someone cancels their ticket, we'll offer it to the next person on the waitlist.</p>
-          {waitlistSuccess && <div className="mb-4 p-3 bg-green-50 text-green-700 rounded text-sm">{waitlistSuccess}</div>}
+        <div className="bg-navy-800 p-6 rounded-3xl shadow-xl border border-white/5">
+          <h3 className="text-lg font-display font-bold text-white mb-2">Sold Out? Join Waitlist</h3>
+          <p className="text-sm text-gray-400 mb-6">We'll notify you if someone cancels their ticket.</p>
+          {waitlistSuccess && <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-sm">{waitlistSuccess}</div>}
           <select 
             value={waitlistCategory} 
             onChange={(e) => setWaitlistCategory(e.target.value)}
-            className="w-full mb-3 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 outline-none"
+            className="w-full mb-4 px-4 py-3 bg-navy-900 border border-white/10 text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none"
           >
-            <option value="">Select Category</option>
+            <option value="">Select Category...</option>
             {categories.map(c => (
               <option key={c.id} value={c.id}>{c.name} (₹{c.price})</option>
             ))}
@@ -197,7 +216,7 @@ export default function SeatMap() {
           <button 
             onClick={handleJoinWaitlist}
             disabled={!waitlistCategory}
-            className="w-full py-2 bg-white border border-indigo-600 text-indigo-600 rounded font-medium hover:bg-indigo-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-white/5 border border-white/10 text-white rounded-full font-medium hover:bg-white/10 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Join Waitlist
           </button>
