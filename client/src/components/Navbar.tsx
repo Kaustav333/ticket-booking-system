@@ -24,7 +24,10 @@ export default function Navbar() {
                 <button onClick={handleLogout} className="text-gray-700 hover:text-red-600">Logout</button>
               </>
             ) : (
-              <Link to="/login" className="text-indigo-600 font-medium">Login</Link>
+              <div className="space-x-4">
+                <Link to="/login" className="text-gray-700 hover:text-indigo-600 font-medium">Login</Link>
+                <Link to="/signup" className="text-indigo-600 font-medium hover:underline">Sign Up</Link>
+              </div>
             )}
           </div>
         </div>

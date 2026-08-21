@@ -4,7 +4,7 @@ import api from '../lib/api';
 
 interface Event {
   id: string;
-  name: string;
+  title: string;
   start_time: string;
   end_time: string;
   status: string;
@@ -38,7 +38,7 @@ export default function Events() {
         {events.map((event) => (
           <div key={event.id} className="bg-white overflow-hidden shadow rounded-lg border border-gray-100 flex flex-col">
             <div className="px-4 py-5 sm:p-6 flex-1">
-              <h3 className="text-lg font-medium text-gray-900 truncate">{event.name}</h3>
+              <h3 className="text-lg font-medium text-gray-900 truncate">{event.title}</h3>
               <p className="mt-1 text-sm text-gray-500">
                 Starts: {new Date(event.start_time).toLocaleString()}
               </p>

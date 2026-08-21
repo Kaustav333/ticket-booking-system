@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Events from './pages/Events';
 import SeatMap from './pages/SeatMap';
 import AdminDashboard from './pages/AdminDashboard';
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Events />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id/seats" element={<SeatMap />} />
             <Route path="/admin" element={<AdminDashboard />} />
