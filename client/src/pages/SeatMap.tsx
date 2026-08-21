@@ -114,7 +114,7 @@ export default function SeatMap() {
                 onMouseEnter={() => handleSeatHover(seat.seat_id)}
                 onClick={() => toggleSelection(seat)}
                 className={`relative h-12 w-full border rounded-t-lg flex flex-col items-center justify-center text-xs transition-colors ${getSeatColor(seat.status, isSelected)}`}
-                title={`${seat.section} Row ${seat.row_identifier} Seat ${seat.seat_identifier} - $${seat.price}`}
+                title={`${seat.section} Row ${seat.row_identifier} Seat ${seat.seat_identifier} - ₹${seat.price}`}
               >
                 <span className="font-semibold">{seat.row_identifier}{seat.seat_identifier}</span>
                 {isHoveredByOther && (
@@ -139,14 +139,14 @@ export default function SeatMap() {
               return (
                 <div key={id} className="flex justify-between text-sm">
                   <span>{seat?.row_identifier}{seat?.seat_identifier} ({seat?.category_name})</span>
-                  <span className="font-medium">${seat?.price}</span>
+                  <span className="font-medium">₹{seat?.price}</span>
                 </div>
               );
             })}
             <div className="border-t pt-3 flex justify-between font-bold">
               <span>Total</span>
               <span>
-                ${selectedSeats.reduce((sum, id) => {
+                ₹{selectedSeats.reduce((sum, id) => {
                   const s = seats.find(st => st.seat_id === id);
                   return sum + (s?.price || 0);
                 }, 0)}
