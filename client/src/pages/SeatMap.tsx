@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import io, { Socket } from 'socket.io-client';
 import api from '../lib/api';
 import { Eye } from 'lucide-react';
@@ -16,7 +16,7 @@ interface Seat {
 
 export default function SeatMap() {
   const { id: eventId } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  
   
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
@@ -42,14 +42,14 @@ export default function SeatMap() {
       socketRef.current?.emit('join_event_room', { event_id: eventId });
     });
 
-    socketRef.current.on('seat_update', (data) => {
+    socketRef.current.on('seat_update', (data: any) => {
       setSeats(prev => prev.map(s => s.seat_id === data.seat_id ? { ...s, status: data.status } : s));
       if (data.status !== 'AVAILABLE') {
         setSelectedSeats(prev => prev.filter(id => id !== data.seat_id));
       }
     });
 
-    socketRef.current.on('seat_presence', (data) => {
+    socketRef.current.on('seat_presence', (data: any) => {
       setPresences(prev => ({ ...prev, [data.seat_id]: data.viewer_count }));
       setTimeout(() => {
          setPresences(prev => ({ ...prev, [data.seat_id]: 0 }));
