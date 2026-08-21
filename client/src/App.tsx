@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Events from './pages/Events';
 import SeatMap from './pages/SeatMap';
 import AdminDashboard from './pages/AdminDashboard';
+import OrganiserDashboard from './pages/OrganiserDashboard';
+import ClaimWaitlist from './pages/ClaimWaitlist';
 import Signup from './pages/Signup';
 import Checkout from './pages/Checkout';
 import BookingHistory from './pages/BookingHistory';
@@ -23,6 +25,8 @@ function App() {
             <Route path="/checkout/:id" element={<Checkout />} />
             <Route path="/bookings" element={<BookingHistory />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/organiser" element={<OrganiserDashboard />} />
+            <Route path="/claim/:token" element={<ClaimWaitlist />} />
           </Routes>
         </main>
       </div>

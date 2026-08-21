@@ -25,8 +25,11 @@ export default function Navbar() {
                 <span className="text-sm text-gray-500 hidden sm:inline-block">Hello, {user?.name} ({user?.role})</span>
                 <Link to="/events" className="text-gray-700 hover:text-indigo-600 font-medium">Events</Link>
                 <Link to="/bookings" className="text-gray-700 hover:text-indigo-600 font-medium">My Bookings</Link>
-                {(user?.role === 'admin' || user?.role === 'organiser') && (
-                  <Link to="/admin" className="text-gray-700 hover:text-indigo-600 font-medium">Dashboard</Link>
+                {user?.role === 'admin' && (
+                  <Link to="/admin" className="text-gray-700 hover:text-indigo-600 font-medium">Admin</Link>
+                )}
+                {user?.role === 'organiser' && (
+                  <Link to="/organiser" className="text-gray-700 hover:text-indigo-600 font-medium">Organiser</Link>
                 )}
                 <button onClick={handleLogout} className="text-gray-700 hover:text-red-600 font-medium">Logout</button>
               </>

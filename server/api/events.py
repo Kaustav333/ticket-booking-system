@@ -53,6 +53,13 @@ async def add_categories(event_id: str, categories: List[EventCategoryCreate], o
         )
         return {"status": "success"}
 
+@router.get("/{event_id}/categories")
+async def get_categories(event_id: str):
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("SELECT id, name, price FROM event_seat_categories WHERE event_id = $1", event_id)
+        return [dict(row) for row in rows]
+
 @router.post("/{event_id}/instantiate_seats")
 async def instantiate_seats(event_id: str, org: dict = Depends(require_organiser)):
     """Copies the layout from the venue into the actual instantiated seats for this specific event."""

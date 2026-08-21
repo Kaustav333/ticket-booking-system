@@ -19,8 +19,11 @@ export default function SeatMap() {
   
   
   const [seats, setSeats] = useState<Seat[]>([]);
+  const [categories, setCategories] = useState<{id: string, name: string, price: number}[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
   const [presences, setPresences] = useState<Record<string, number>>({});
+  const [waitlistCategory, setWaitlistCategory] = useState('');
+  const [waitlistSuccess, setWaitlistSuccess] = useState('');
   const [error, setError] = useState('');
   
   const socketRef = useRef<Socket | null>(null);
@@ -30,6 +33,8 @@ export default function SeatMap() {
       try {
         const res = await api.get(`/events/${eventId}/map`);
         setSeats(res.data);
+        const catRes = await api.get(`/events/${eventId}/categories`);
+        setCategories(catRes.data);
       } catch (err) {
         console.error(err);
       }
@@ -82,6 +87,19 @@ export default function SeatMap() {
       navigate(`/checkout/${res.data.booking_id}`);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to hold seats. They may have just been taken.');
+    }
+  };
+
+  const handleJoinWaitlist = async () => {
+    if (!waitlistCategory) return;
+    try {
+      setError('');
+      setWaitlistSuccess('');
+      await api.post(`/events/${eventId}/waitlist`, { category_id: waitlistCategory });
+      setWaitlistSuccess('Successfully joined the waitlist for this category! You will be emailed if a seat becomes available.');
+      setWaitlistCategory('');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to join waitlist.');
     }
   };
 
@@ -160,6 +178,29 @@ export default function SeatMap() {
             </button>
           </div>
         )}
+
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h3 className="text-lg font-bold mb-2">Sold Out? Join Waitlist</h3>
+          <p className="text-sm text-gray-500 mb-4">If someone cancels their ticket, we'll offer it to the next person on the waitlist.</p>
+          {waitlistSuccess && <div className="mb-4 p-3 bg-green-50 text-green-700 rounded text-sm">{waitlistSuccess}</div>}
+          <select 
+            value={waitlistCategory} 
+            onChange={(e) => setWaitlistCategory(e.target.value)}
+            className="w-full mb-3 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 outline-none"
+          >
+            <option value="">Select Category</option>
+            {categories.map(c => (
+              <option key={c.id} value={c.id}>{c.name} (₹{c.price})</option>
+            ))}
+          </select>
+          <button 
+            onClick={handleJoinWaitlist}
+            disabled={!waitlistCategory}
+            className="w-full py-2 bg-white border border-indigo-600 text-indigo-600 rounded font-medium hover:bg-indigo-50 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Join Waitlist
+          </button>
+        </div>
       </div>
     </div>
   );
