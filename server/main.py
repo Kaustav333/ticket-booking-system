@@ -15,7 +15,7 @@ async def lifespan(app: FastAPI):
     # Shutdown
     await db.disconnect()
 
-app = FastAPI(title="Ticket Booking API", lifespan=lifespan)
+app = FastAPI(title="AuraTix API", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
