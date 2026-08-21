@@ -5,6 +5,8 @@ import Events from './pages/Events';
 import SeatMap from './pages/SeatMap';
 import AdminDashboard from './pages/AdminDashboard';
 import Signup from './pages/Signup';
+import Checkout from './pages/Checkout';
+import BookingHistory from './pages/BookingHistory';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/events" element={<Events />} />
             <Route path="/events/:id/seats" element={<SeatMap />} />
+            <Route path="/checkout/:id" element={<Checkout />} />
+            <Route path="/bookings" element={<BookingHistory />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>

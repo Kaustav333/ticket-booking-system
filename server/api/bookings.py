@@ -143,6 +143,37 @@ async def confirm_booking(booking_id: str, req: ConfirmRequest, user: dict = Dep
             
             return {"status": "success", "booking_reference": booking['booking_reference']}
 
+@router.get("/{booking_id}")
+async def get_booking(booking_id: str, user: dict = Depends(get_current_user)):
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        booking = await conn.fetchrow(
+            "SELECT id, event_id, booking_reference, status, total_amount, created_at FROM bookings WHERE id = $1 AND user_id = $2",
+            booking_id, user['sub']
+        )
+        if not booking:
+            raise HTTPException(status_code=404, detail="Booking not found")
+        
+        # Get seats and expiration
+        seats = await conn.fetch(
+            """
+            SELECT bs.seat_id, bs.price, bs.category, s.section, s.row_identifier, s.seat_identifier, se.expires_at
+            FROM booking_seats bs
+            JOIN seats s ON s.id = bs.seat_id
+            LEFT JOIN seat_events se ON se.booking_id = bs.booking_id AND se.event_type = 'HOLD'
+            WHERE bs.booking_id = $1
+            """,
+            booking_id
+        )
+        
+        expires_at = seats[0]['expires_at'] if seats and seats[0]['expires_at'] else None
+        
+        return {
+            **dict(booking),
+            "expires_at": expires_at,
+            "seats": [dict(s) for s in seats]
+        }
+
 @router.get("/history")
 async def get_booking_history(user: dict = Depends(get_current_user)):
     pool = await get_db_pool()

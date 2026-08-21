@@ -78,8 +78,8 @@ export default function SeatMap() {
     try {
       setError('');
       const res = await api.post('/bookings/hold', { event_id: eventId, seat_ids: selectedSeats });
-      alert(`Successfully held! Booking Ref: ${res.data.booking_reference}`);
       setSelectedSeats([]);
+      navigate(`/checkout/${res.data.booking_id}`);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to hold seats. They may have just been taken.');
     }
