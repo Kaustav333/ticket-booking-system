@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import api from '../api';
+import { useState, useEffect } from 'react';
+import api from '../lib/api';
 
 interface EventSummary {
   id: string;
@@ -11,7 +11,6 @@ interface EventSummary {
 }
 
 export default function OrganiserDashboard() {
-  const [events, setEvents] = useState<any[]>([]);
   const [summaries, setSummaries] = useState<Record<string, EventSummary>>({});
   const [venues, setVenues] = useState<any[]>([]);
   
@@ -26,7 +25,6 @@ export default function OrganiserDashboard() {
   const fetchEvents = async () => {
     try {
       const res = await api.get('/events/');
-      setEvents(res.data);
       // Fetch summaries for each event
       res.data.forEach(async (ev: any) => {
         try {
@@ -53,7 +51,7 @@ export default function OrganiserDashboard() {
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await api.post('/events/', {
+      await api.post('/events/', {
         ...newEvent,
         start_time: new Date(newEvent.start_time).toISOString(),
         end_time: new Date(newEvent.end_time).toISOString(),

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import api from '../api';
+import api from '../lib/api';
 
 interface Booking {
   id: string;

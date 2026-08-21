@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import io, { Socket } from 'socket.io-client';
 import api from '../lib/api';
 import { Eye } from 'lucide-react';
@@ -16,6 +16,7 @@ interface Seat {
 
 export default function SeatMap() {
   const { id: eventId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   
   
   const [seats, setSeats] = useState<Seat[]>([]);
