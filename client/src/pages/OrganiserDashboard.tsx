@@ -14,7 +14,7 @@ export default function OrganiserDashboard() {
   const [summaries, setSummaries] = useState<Record<string, EventSummary>>({});
   const [venues, setVenues] = useState<any[]>([]);
   
-  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', start_time: '', end_time: '' });
+  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '' });
   const [newCategory, setNewCategory] = useState({ name: '', price: 0 });
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function OrganiserDashboard() {
         end_time: new Date(newEvent.end_time).toISOString(),
       });
       alert('Event created!');
-      setNewEvent({ venue_id: '', title: '', start_time: '', end_time: '' });
+      setNewEvent({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '' });
       fetchEvents();
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to create event');
@@ -111,6 +111,14 @@ export default function OrganiserDashboard() {
             <div>
               <label className="block text-sm font-medium mb-1">End Time</label>
               <input type="datetime-local" required value={newEvent.end_time} onChange={e => setNewEvent({...newEvent, end_time: e.target.value})} className="w-full border rounded p-2" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Payment Instructions / Bank Details (Optional)</label>
+              <textarea placeholder="e.g. Bank Account No, IFSC, UPI ID" value={newEvent.payment_details} onChange={e => setNewEvent({...newEvent, payment_details: e.target.value})} className="w-full border rounded p-2" rows={3} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Payment QR Code Image URL (Optional)</label>
+              <input type="url" placeholder="https://..." value={newEvent.payment_qr_url} onChange={e => setNewEvent({...newEvent, payment_qr_url: e.target.value})} className="w-full border rounded p-2" />
             </div>
             <button type="submit" className="w-full bg-indigo-600 text-white rounded py-2 hover:bg-indigo-700">Create Event</button>
           </form>

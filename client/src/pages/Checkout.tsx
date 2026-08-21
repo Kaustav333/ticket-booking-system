@@ -25,23 +25,26 @@ export default function Checkout() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
+  const [eventData, setEventData] = useState<any>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
-    const fetchBooking = async () => {
+    const fetchBookingAndEvent = async () => {
       try {
         const res = await api.get(`/bookings/${id}`);
         setBooking(res.data);
+        const evRes = await api.get(`/events/${res.data.event_id}`);
+        setEventData(evRes.data);
       } catch (err: any) {
         setError(err.response?.data?.detail || 'Failed to load booking');
       } finally {
         setLoading(false);
       }
     };
-    fetchBooking();
+    fetchBookingAndEvent();
   }, [id]);
 
   useEffect(() => {
@@ -121,6 +124,25 @@ export default function Checkout() {
             <span className="text-2xl font-bold text-indigo-600">₹{booking.total_amount}</span>
           </div>
           
+          {(eventData?.payment_details || eventData?.payment_qr_url) && (
+            <div className="bg-indigo-50 rounded-lg p-4 mt-6 border border-indigo-100">
+              <h3 className="text-sm font-bold text-indigo-900 uppercase tracking-wider mb-3">Payment Instructions</h3>
+              {eventData.payment_details && (
+                <div className="whitespace-pre-wrap text-indigo-800 text-sm mb-4">
+                  {eventData.payment_details}
+                </div>
+              )}
+              {eventData.payment_qr_url && (
+                <div className="flex justify-center">
+                  <img src={eventData.payment_qr_url} alt="Payment QR Code" className="max-w-xs rounded shadow-sm" />
+                </div>
+              )}
+              <p className="text-xs text-indigo-600 mt-4 text-center">
+                Please complete the payment and then click "Confirm & Pay" below to finalize your booking.
+              </p>
+            </div>
+          )}
+          
           {booking.status === 'HELD' ? (
             <button
               onClick={handleConfirm}
@@ -130,7 +152,7 @@ export default function Checkout() {
                   ? 'bg-gray-400 cursor-not-allowed' 
                   : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow'}`}
             >
-              {isExpired ? 'Hold Expired' : confirming ? 'Processing...' : 'Confirm & Pay'}
+              {isExpired ? 'Hold Expired' : confirming ? 'Processing...' : 'Confirm Booking'}
             </button>
           ) : (
             <div className="w-full py-4 text-center rounded-lg text-lg font-bold bg-gray-100 text-gray-600">
