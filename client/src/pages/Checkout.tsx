@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../lib/api';
-import { Clock } from 'lucide-react';
 
 interface Seat {
   seat_id: string;
