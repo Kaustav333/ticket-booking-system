@@ -6,6 +6,7 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [role, setRole] = useState('customer');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -13,7 +14,7 @@ export default function Signup() {
     e.preventDefault();
     try {
       setError('');
-      const res = await api.post('/auth/register', { email, password, name });
+      const res = await api.post('/auth/register', { email, password, name, role });
       localStorage.setItem('token', res.data.access_token);
       localStorage.setItem('user', JSON.stringify(res.data.user));
       navigate('/');
@@ -58,6 +59,19 @@ export default function Signup() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
+            <div className="flex gap-4">
+              <label className="flex items-center space-x-2">
+                <input type="radio" value="customer" checked={role === 'customer'} onChange={(e) => setRole(e.target.value)} className="text-indigo-600 focus:ring-indigo-500" />
+                <span className="text-sm text-gray-700">Customer</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input type="radio" value="organiser" checked={role === 'organiser'} onChange={(e) => setRole(e.target.value)} className="text-indigo-600 focus:ring-indigo-500" />
+                <span className="text-sm text-gray-700">Organiser</span>
+              </label>
+            </div>
           </div>
           <button
             type="submit"
