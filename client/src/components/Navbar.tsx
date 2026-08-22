@@ -183,14 +183,23 @@ export default function Navbar() {
             </div>
 
             {token ? (
-              <div className="hidden sm:flex items-center pl-4 space-x-4">
-                <div className="px-3 py-1.5 text-sm font-medium text-gray-700 flex items-center gap-2 cursor-default">
-                  <div className="w-6 h-6 rounded-full bg-bms-red flex items-center justify-center text-white text-xs">
-                    {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              <>
+                <div className="hidden sm:flex items-center pl-4 space-x-4">
+                  <div className="px-3 py-1.5 text-sm font-medium text-gray-700 flex items-center gap-2 cursor-default">
+                    <div className="w-6 h-6 rounded-full bg-bms-red flex items-center justify-center text-white text-xs">
+                      {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    {user?.name || 'User'}
                   </div>
-                  {user?.name || 'User'}
+                  <button onClick={handleLogout} className="text-sm text-bms-red hover:text-bms-hover font-bold transition-colors">
+                    Logout
+                  </button>
                 </div>
-              </div>
+                {/* Mobile logout */}
+                <button onClick={handleLogout} className="sm:hidden text-bms-red hover:text-bms-hover font-bold transition-colors ml-4 text-sm">
+                  Logout
+                </button>
+              </>
             ) : (
               <div className="space-x-4 flex items-center pl-4">
                 <Link to="/login" className="px-5 py-1.5 rounded-md bg-bms-red text-white text-sm font-medium hover:bg-bms-hover transition-colors">Sign In</Link>
