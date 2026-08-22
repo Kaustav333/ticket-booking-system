@@ -134,3 +134,37 @@ async def fix_images():
             return {"status": "success", "message": f"Fixed {len(rows)} images."}
         except Exception as e:
             return {"status": "error", "message": str(e)}
+
+@router.post("/fix-real-posters")
+async def fix_real_posters():
+    pool = await get_db_pool()
+    import urllib.request
+    import json
+    
+    async with pool.acquire() as conn:
+        try:
+            rows = await conn.fetch("SELECT id, title, category FROM events")
+            updated = 0
+            for row in rows:
+                if row['category'] != 'Movie': continue
+                
+                # Strip the appended number like "The Matrix 0" -> "The Matrix"
+                clean_title = " ".join([w for w in row['title'].split() if not w.isdigit()])
+                
+                try:
+                    url = f"https://itunes.apple.com/search?term={urllib.parse.quote(clean_title)}&entity=movie&limit=1"
+                    req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                    with urllib.request.urlopen(req) as response:
+                        data = json.loads(response.read().decode())
+                        if data['resultCount'] > 0:
+                            # iTunes artwork URL, replacing 100x100 with a higher res
+                            art_url = data['results'][0]['artworkUrl100'].replace('100x100bb', '600x800bb')
+                            await conn.execute("UPDATE events SET thumbnail_url = $1 WHERE id = $2", art_url, row['id'])
+                            updated += 1
+                except Exception as ex:
+                    print(f"Error fetching for {clean_title}: {ex}")
+                    pass
+                    
+            return {"status": "success", "message": f"Updated {updated} events with real posters from iTunes!"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
