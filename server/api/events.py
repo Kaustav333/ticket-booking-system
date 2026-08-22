@@ -96,7 +96,12 @@ async def instantiate_seats(event_id: str, org: dict = Depends(require_organiser
 async def list_events():
     pool = await get_db_pool()
     async with pool.acquire() as conn:
-        rows = await conn.fetch("SELECT * FROM events ORDER BY start_time ASC")
+        rows = await conn.fetch("""
+            SELECT e.*, v.location as venue_location 
+            FROM events e
+            LEFT JOIN venues v ON e.venue_id = v.id
+            ORDER BY e.start_time ASC
+        """)
         return [dict(row) for row in rows]
 
 @router.get("/{event_id}")

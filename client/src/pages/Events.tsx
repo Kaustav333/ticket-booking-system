@@ -11,6 +11,7 @@ interface Event {
   venue_id: string;
   thumbnail_url: string;
   category: string;
+  venue_location: string;
 }
 
 export default function Events() {
@@ -18,6 +19,7 @@ export default function Events() {
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
+  const locationFilter = searchParams.get('location');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -33,14 +35,22 @@ export default function Events() {
     fetchEvents();
   }, []);
 
-  // Filter events based on URL query param
-  const filteredEvents = categoryFilter 
-    ? events.filter(e => e.category && e.category.toLowerCase() === categoryFilter.toLowerCase())
-    : events;
+  // Filter events based on URL query params
+  let filteredEvents = events;
+  if (categoryFilter) {
+    filteredEvents = filteredEvents.filter(e => e.category && e.category.toLowerCase() === categoryFilter.toLowerCase());
+  }
+  if (locationFilter) {
+    filteredEvents = filteredEvents.filter(e => e.venue_location && e.venue_location.toLowerCase() === locationFilter.toLowerCase());
+  }
 
-  const displayCategory = categoryFilter 
+  let displayCategory = categoryFilter 
     ? categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)
     : "Recommended Events";
+  
+  if (locationFilter) {
+    displayCategory += ` in ${locationFilter.charAt(0).toUpperCase() + locationFilter.slice(1)}`;
+  }
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">

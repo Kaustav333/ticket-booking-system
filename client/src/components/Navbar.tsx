@@ -8,6 +8,20 @@ export default function Navbar() {
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : null;
   const [location, setLocation] = useState('Select Location');
+  const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
+  const [searchLocationInput, setSearchLocationInput] = useState('');
+
+  const handleLocationSelect = (loc: string) => {
+    setLocation(loc);
+    setIsLocationMenuOpen(false);
+    navigate(`/?location=${loc.toLowerCase()}`);
+  };
+
+  const handleLocationSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchLocationInput.trim()) {
+      handleLocationSelect(searchLocationInput.trim());
+    }
+  };
 
   useEffect(() => {
     if ('geolocation' in navigator) {
@@ -62,11 +76,48 @@ export default function Navbar() {
 
           <div className="flex items-center space-x-4">
             {/* Location */}
-            <div className="hidden sm:flex items-center text-sm text-gray-700 font-medium cursor-pointer hover:text-gray-900">
-              {location}
-              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
+            <div className="relative hidden sm:flex items-center">
+              <div 
+                className="flex items-center text-sm text-gray-700 font-medium cursor-pointer hover:text-gray-900"
+                onClick={() => setIsLocationMenuOpen(!isLocationMenuOpen)}
+              >
+                {location}
+                <svg className={`w-4 h-4 ml-1 transition-transform ${isLocationMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+
+              {/* Location Dropdown */}
+              {isLocationMenuOpen && (
+                <div className="absolute top-8 right-0 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4 z-50">
+                  <div className="relative mb-4">
+                    <svg className="h-4 w-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input 
+                      type="text" 
+                      placeholder="Search for your city (Press Enter)"
+                      className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded text-gray-900 focus:outline-none focus:border-bms-red"
+                      value={searchLocationInput}
+                      onChange={(e) => setSearchLocationInput(e.target.value)}
+                      onKeyDown={handleLocationSearch}
+                      autoFocus
+                    />
+                  </div>
+                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Popular Cities</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {['Mumbai', 'Delhi', 'Bengaluru', 'Sydney', 'Hyderabad', 'Pune'].map(city => (
+                      <div 
+                        key={city}
+                        className="text-sm text-gray-700 hover:text-bms-red cursor-pointer py-1 px-2 rounded hover:bg-gray-50 transition-colors"
+                        onClick={() => handleLocationSelect(city)}
+                      >
+                        {city}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {token ? (
