@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -17,7 +18,9 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
-            <Link to="/" className="text-2xl font-display font-bold bg-gradient-to-r from-violet-400 to-indigo-500 bg-clip-text text-transparent">AuraTix</Link>
+            <Link to="/" className="flex items-center">
+              <img src={logo} alt="AuraTix" className="h-10 object-contain" />
+            </Link>
           </div>
           <div className="flex items-center space-x-6">
             {token ? (
