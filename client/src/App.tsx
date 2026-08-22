@@ -10,6 +10,9 @@ import Signup from './pages/Signup';
 import Checkout from './pages/Checkout';
 import BookingHistory from './pages/BookingHistory';
 
+import Support from './pages/Support';
+import Rewards from './pages/Rewards';
+
 function App() {
   return (
     <Router>
@@ -29,6 +32,8 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/organiser" element={<OrganiserDashboard />} />
             <Route path="/claim/:token" element={<ClaimWaitlist />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/rewards" element={<Rewards />} />
           </Routes>
         </main>
         </div>

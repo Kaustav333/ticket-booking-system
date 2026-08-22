@@ -221,29 +221,29 @@ export default function Navbar() {
                     <p className="text-sm font-bold text-gray-900">Hey!</p>
                   </div>
                   <div className="flex flex-col py-2">
-                    <Link to="/bookings" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                    <Link to="/bookings" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                       <span>Your Orders</span>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </Link>
-                    <Link to="/events" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                    <Link to="/events" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                       <span>ListYourShow</span>
                       <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </Link>
                     {user?.role === 'admin' && (
-                      <Link to="/admin" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <Link to="/admin" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                         <span>Admin Dashboard</span>
                       </Link>
                     )}
                     {user?.role === 'organiser' && (
-                      <Link to="/organiser" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <Link to="/organiser" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                         <span>Organiser Dashboard</span>
                       </Link>
                     )}
                     <div className="h-px bg-gray-100 my-1"></div>
-                    <Link to="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                    <Link to="/support" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                       <span>Help & Support</span>
                     </Link>
-                    <Link to="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                    <Link to="/rewards" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                       <span>Rewards</span>
                     </Link>
                   </div>
