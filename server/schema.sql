@@ -44,6 +44,7 @@ CREATE TABLE events (
     payment_details VARCHAR,
     payment_qr_url VARCHAR,
     thumbnail_url VARCHAR,
+    average_rating DECIMAL(3,1),
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX idx_events_organiser ON events(organiser_id);

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { Star } from 'lucide-react';
 import api from '../lib/api';
 
 interface Event {
@@ -13,6 +14,7 @@ interface Event {
   category: string;
   venue_location: string;
   venue_name: string;
+  average_rating: number | null;
 }
 
 export default function Events() {
@@ -53,13 +55,80 @@ export default function Events() {
     }
   }
 
-  let displayCategory = categoryFilter 
-    ? categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)
-    : "Recommended Events";
-  
-  if (locationFilter && !isLocationFallback) {
-    displayCategory += ` in ${locationFilter.charAt(0).toUpperCase() + locationFilter.slice(1)}`;
-  }
+  // Group events by category logic for the homepage
+  const movies = filteredEvents.filter(e => e.category === 'Movie');
+  const recommended = filteredEvents.filter(e => e.category !== 'Movie' && (!e.average_rating || e.average_rating < 8.5));
+  const topPicks = [...filteredEvents].sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0)).slice(0, 10); // Top 10 highest rated
+
+  const EventCard = ({ event }: { event: Event }) => (
+    <Link to={`/events/${event.id}/seats`} className="group flex flex-col cursor-pointer min-w-[200px] max-w-[240px] flex-shrink-0">
+      
+      {/* Poster Image */}
+      <div className="w-full aspect-[2/3] rounded-xl overflow-hidden relative shadow-sm mb-3">
+        {event.thumbnail_url ? (
+          <img src={event.thumbnail_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        ) : (
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <span className="text-gray-400">No Image</span>
+          </div>
+        )}
+        
+        {/* Status Badge */}
+        <div className="absolute top-2 right-2">
+          <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase ${
+            event.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}>
+            {event.status}
+          </span>
+        </div>
+
+        {/* Rating Badge */}
+        {event.average_rating && (
+          <div className="absolute bottom-2 right-2 bg-gray-900/80 backdrop-blur-sm text-white px-2 py-1 rounded-md flex items-center space-x-1">
+            <Star className="w-3 h-3 text-bms-red fill-current" />
+            <span className="text-xs font-bold">{event.average_rating.toFixed(1)}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Event Details */}
+      <div className="flex flex-col">
+        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
+        
+        <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+          {event.category || 'Event'} • {event.venue_location}
+        </p>
+        <p className="text-xs text-gray-400 mt-1 font-medium">
+          {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+        </p>
+      </div>
+    </Link>
+  );
+
+  const EventSection = ({ title, subtitle, eventsList }: { title: string, subtitle?: string, eventsList: Event[] }) => {
+    if (eventsList.length === 0) return null;
+    return (
+      <div className="space-y-4 pt-6">
+        <div className="flex justify-between items-end">
+          <div>
+            <h2 className="text-2xl font-display font-bold text-gray-900">{title}</h2>
+            {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+          </div>
+          <button className="text-bms-red text-sm font-semibold hover:underline flex items-center">
+            See All <span className="ml-1">›</span>
+          </button>
+        </div>
+        
+        <div className="flex overflow-x-auto space-x-6 pb-6 pt-2 scrollbar-hide snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {eventsList.map((event) => (
+            <div key={event.id} className="snap-start">
+              <EventCard event={event} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -100,51 +169,39 @@ export default function Events() {
           </div>
         )}
 
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayCategory}</h2>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {filteredEvents.map((event) => (
-            <Link to={`/events/${event.id}/seats`} key={event.id} className="group flex flex-col cursor-pointer">
-              
-              {/* Poster Image */}
-              <div className="w-full aspect-[2/3] rounded-lg overflow-hidden relative shadow-sm mb-3">
-                {event.thumbnail_url ? (
-                  <img src={event.thumbnail_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                ) : (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-400">No Image</span>
-                  </div>
-                )}
-                
-                {/* Status Badge */}
-                <div className="absolute top-2 right-2">
-                  <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                    event.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                  }`}>
-                    {event.status}
-                  </span>
-                </div>
-              </div>
-
-              {/* Event Details */}
-              <div className="flex flex-col">
-                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
-                
-                <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-                  {event.venue_name}, {event.venue_location}
-                </p>
-                <p className="text-xs text-gray-400 mt-1 font-medium">
-                  {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-                </p>
-              </div>
-            </Link>
-          ))}
-          {filteredEvents.length === 0 && (
-            <div className="col-span-full py-20 text-center text-gray-500 bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200 border-dashed">
-              No {categoryFilter ? categoryFilter : 'events'} found. Check back later!
+        {categoryFilter ? (
+          // If a category filter is active, just show a normal grid of those events
+          <div className="space-y-6 pt-6">
+            <h2 className="text-2xl font-display font-bold text-gray-900">{categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)}</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {filteredEvents.map(evt => <EventCard key={evt.id} event={evt} />)}
             </div>
-          )}
-        </div>
+            {filteredEvents.length === 0 && (
+              <div className="col-span-full py-20 text-center text-gray-500 bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200 border-dashed">
+                No {categoryFilter} events found.
+              </div>
+            )}
+          </div>
+        ) : (
+          // If no category filter, show the categorized horizontal rows
+          <div className="space-y-2">
+            <EventSection title="Now Showing" subtitle="Book tickets for the latest movies now" eventsList={movies} />
+            <EventSection title="Top Picks For You" subtitle="Curated just for you based on ratings" eventsList={topPicks} />
+            <EventSection title="Recommended Events" subtitle="The best of live events, concerts & more" eventsList={recommended} />
+            
+            {/* Show all as grid if no specific categorizations fit */}
+            {filteredEvents.length > 0 && movies.length === 0 && topPicks.length === 0 && recommended.length === 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-8">
+                {filteredEvents.map(evt => <EventCard key={evt.id} event={evt} />)}
+              </div>
+            )}
+            {filteredEvents.length === 0 && (
+              <div className="py-20 text-center text-gray-500 bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200 border-dashed">
+                No events found.
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
