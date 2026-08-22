@@ -1,10 +1,11 @@
+import os
 import asyncio
 import asyncpg
 import bcrypt
 from datetime import datetime, timedelta
 
 async def seed():
-    conn = await asyncpg.connect("postgresql://postgres.wgvohfyhkfcevnjeizhg:Kaustav4%24567%24@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres")
+    conn = await asyncpg.connect(os.getenv('DATABASE_URL'))
     
     print("Connected to DB. Seeding...")
     

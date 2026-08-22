@@ -1,7 +1,8 @@
+import os
 import asyncio
 import asyncpg
 async def main():
-    conn = await asyncpg.connect("postgresql://postgres.wgvohfyhkfcevnjeizhg:Kaustav4%24567%24@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres")
+    conn = await asyncpg.connect(os.getenv('DATABASE_URL'))
     events = await conn.fetch("SELECT * FROM events")
     print(events)
     await conn.close()

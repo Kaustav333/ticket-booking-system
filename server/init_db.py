@@ -1,8 +1,9 @@
+import os
 import asyncio
 import asyncpg
 
 async def init_db():
-    conn = await asyncpg.connect("postgresql://postgres.wgvohfyhkfcevnjeizhg:Kaustav4%24567%24@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres")
+    conn = await asyncpg.connect(os.getenv('DATABASE_URL'))
     
     print("Connected. Running schema.sql...")
     
