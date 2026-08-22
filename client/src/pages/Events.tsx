@@ -78,13 +78,16 @@ export default function Events() {
         />
         <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-24">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Endless Entertainment<br/>Anytime. Anywhere!</h1>
-          <button className="bg-bms-red text-white px-6 py-2 rounded-md font-medium w-max hover:bg-bms-hover transition-colors">
+          <button 
+            onClick={() => document.getElementById('events-grid')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-bms-red text-white px-6 py-2 rounded-md font-medium w-max hover:bg-bms-hover transition-colors"
+          >
             Book Now
           </button>
         </div>
       </div>
 
-      <div>
+      <div id="events-grid">
         {isLocationFallback && (
           <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 flex items-start space-x-3">
             <svg className="h-6 w-6 text-yellow-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
