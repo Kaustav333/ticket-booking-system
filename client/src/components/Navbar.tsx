@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
 
 export default function Navbar() {
@@ -6,6 +7,27 @@ export default function Navbar() {
   const token = localStorage.getItem('token');
   const userString = localStorage.getItem('user');
   const user = userString ? JSON.parse(userString) : null;
+  const [location, setLocation] = useState('Select Location');
+
+  useEffect(() => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          // Use OpenStreetMap Nominatim for reverse geocoding
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await response.json();
+          // Extract city, town, or fallback to state/country
+          const city = data.address.city || data.address.town || data.address.state_district || 'Detected Location';
+          setLocation(city);
+        } catch (error) {
+          console.error("Error fetching location data:", error);
+        }
+      }, (error) => {
+        console.error("Geolocation error:", error);
+      });
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -39,9 +61,9 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Location Mockup */}
+            {/* Location */}
             <div className="hidden sm:flex items-center text-sm text-gray-700 font-medium cursor-pointer hover:text-gray-900">
-              Ujjain
+              {location}
               <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
