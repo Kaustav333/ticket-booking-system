@@ -95,9 +95,8 @@ async def seed_demo_events():
             start_time = datetime.now() + timedelta(days=random.randint(1, 30))
             end_time = start_time + timedelta(hours=3)
             
-            # Simple placeholder image with random color
-            bg = f"{random.randint(0,255):02x}{random.randint(0,255):02x}{random.randint(0,255):02x}"
-            thumbnail_url = f"https://fakeimg.pl/600x800/{bg}/ffffff?text={title.replace(' ', '+')}"
+            # Using picsum for reliable placeholder images
+            thumbnail_url = f"https://picsum.photos/seed/{title.replace(' ', '')}/600/800"
             
             event_id = await conn.fetchval("""
                 INSERT INTO events (organiser_id, venue_id, title, start_time, end_time, thumbnail_url, average_rating, category)
@@ -121,3 +120,17 @@ async def seed_demo_events():
             """, seats_data)
             
     return {"status": "success", "message": "Seeded 50 demo events!"}
+
+@router.post("/fix-images")
+async def fix_images():
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        try:
+            # Replaces fakeimg.pl URLs with picsum.photos URLs in the db
+            rows = await conn.fetch("SELECT id, title FROM events WHERE thumbnail_url LIKE '%fakeimg.pl%'")
+            for row in rows:
+                new_url = f"https://picsum.photos/seed/{row['title'].replace(' ', '')}/600/800"
+                await conn.execute("UPDATE events SET thumbnail_url = $1 WHERE id = $2", new_url, row['id'])
+            return {"status": "success", "message": f"Fixed {len(rows)} images."}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
