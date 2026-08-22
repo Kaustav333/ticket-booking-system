@@ -117,53 +117,79 @@ export default function SeatMap() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 pb-12">
-      <div className="flex-1 bg-white p-8 rounded-3xl shadow-xl border border-gray-200">
+      <div className="flex-1 bg-white p-8 rounded-3xl shadow-sm border border-gray-200">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-display font-bold text-gray-900">Select Your Seats</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Select Your Seats</h2>
           
           <div className="flex space-x-4 text-xs font-medium">
-            <div className="flex items-center"><span className="w-3 h-3 rounded bg-teal-500/40 border border-teal-500/50 mr-2"></span>Available</div>
-            <div className="flex items-center"><span className="w-3 h-3 rounded bg-yellow-500/40 border border-yellow-500/50 mr-2"></span>Held</div>
-            <div className="flex items-center"><span className="w-3 h-3 rounded bg-red-500/20 border border-red-500/20 mr-2"></span>Booked</div>
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-white border border-green-500 mr-2"></span>Available</div>
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-yellow-100 border border-yellow-400 mr-2"></span>Held</div>
+            <div className="flex items-center"><span className="w-3 h-3 rounded bg-gray-200 border border-gray-300 mr-2"></span>Booked</div>
           </div>
         </div>
         
-        {error && <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl">{error}</div>}
+        {error && <div className="mb-6 p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl">{error}</div>}
         
-        <div className="mb-12 relative">
-          <div className="absolute inset-0 bg-gradient-to-t from-violet-600/0 to-violet-600/20 blur-xl"></div>
-          <div className="relative p-3 bg-gradient-to-r from-navy-800 via-white/5 to-navy-800 border-t-2 border-indigo-500/50 text-center text-indigo-300/50 tracking-[0.7em] font-display rounded-t-3xl">STAGE</div>
+        <div className="mb-16 relative w-full flex justify-center">
+          {/* Curved Stage matching BookMyShow */}
+          <div className="w-2/3 h-12 bg-gradient-to-b from-gray-100 to-transparent border-t-[3px] border-bms-red rounded-t-[50%] flex items-center justify-center">
+             <span className="text-gray-400 font-semibold tracking-[0.5em] text-sm mt-2">STAGE</span>
+          </div>
         </div>
         
-        <div className="grid grid-cols-10 gap-3 md:gap-4 max-w-4xl mx-auto">
-          {seats.map(seat => {
-            const isSelected = selectedSeats.includes(seat.seat_id);
-            const isHoveredByOther = presences[seat.seat_id] > 0;
-            return (
-              <div 
-                key={seat.seat_id}
-                onMouseEnter={() => handleSeatHover(seat.seat_id)}
-                onClick={() => toggleSelection(seat)}
-                className={`relative h-10 w-10 md:h-12 md:w-12 border rounded-xl flex flex-col items-center justify-center text-[10px] md:text-xs transition-all duration-200 ${getSeatColor(seat.status, isSelected)}`}
-                title={`${seat.section} Row ${seat.row_identifier} Seat ${seat.seat_identifier} - ₹${seat.price}`}
-              >
-                <span className="font-semibold">{seat.row_identifier}{seat.seat_identifier}</span>
-                {isHoveredByOther && (
-                  <span className="absolute -top-1.5 -right-1.5 bg-blue-500/20 rounded-full p-0.5 border border-blue-500/50">
-                    <Eye className="h-3 w-3 text-blue-400" />
-                  </span>
-                )}
+        <div className="flex flex-col items-center space-y-4 max-w-4xl mx-auto overflow-x-auto pb-4">
+          {Object.entries(
+            seats.reduce((acc, seat) => {
+              if (!acc[seat.row_identifier]) acc[seat.row_identifier] = [];
+              acc[seat.row_identifier].push(seat);
+              return acc;
+            }, {} as Record<string, Seat[]>)
+          )
+          .sort(([rowA], [rowB]) => rowA.localeCompare(rowB)) // Sort rows A-Z
+          .map(([rowId, rowSeats]) => (
+            <div key={rowId} className="flex items-center space-x-4">
+              <div className="w-6 text-center font-bold text-gray-400 text-sm">{rowId}</div>
+              <div className="flex space-x-2">
+                {rowSeats
+                  .sort((a, b) => parseInt(a.seat_identifier) - parseInt(b.seat_identifier)) // Sort 1-10
+                  .map(seat => {
+                  const isSelected = selectedSeats.includes(seat.seat_id);
+                  const isHoveredByOther = presences[seat.seat_id] > 0;
+                  
+                  // Clean minimalist BookMyShow style blocks
+                  let styleClass = 'bg-white border-gray-300 text-gray-700 hover:border-green-500 hover:text-green-600'; // Default Available
+                  if (isSelected) styleClass = 'bg-green-500 border-green-500 text-white shadow-md';
+                  else if (seat.status === 'HELD') styleClass = 'bg-yellow-100 border-yellow-400 text-yellow-700 cursor-not-allowed opacity-70';
+                  else if (seat.status === 'CONFIRMED' || seat.status === 'WAITLIST_OFFERED') styleClass = 'bg-gray-200 border-gray-300 text-transparent cursor-not-allowed';
+
+                  return (
+                    <div 
+                      key={seat.seat_id}
+                      onMouseEnter={() => handleSeatHover(seat.seat_id)}
+                      onClick={() => toggleSelection(seat)}
+                      className={`relative h-8 w-8 md:h-9 md:w-9 border rounded-md flex flex-col items-center justify-center text-[11px] font-medium transition-all duration-150 cursor-pointer ${styleClass}`}
+                      title={`${seat.category_name} - ₹${seat.price}`}
+                    >
+                      <span>{seat.seat_identifier}</span>
+                      {isHoveredByOther && (
+                        <span className="absolute -top-2 -right-2 bg-blue-100 rounded-full p-0.5 border border-blue-300">
+                          <Eye className="h-3 w-3 text-blue-500" />
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
       
       <div className="w-full lg:w-96 space-y-6">
-        <div className="bg-white p-6 rounded-3xl shadow-xl border border-gray-200">
-          <h3 className="text-xl font-display font-bold text-gray-900 mb-6">Selection</h3>
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-200">
+          <h3 className="text-xl font-bold text-gray-900 mb-6">Booking Summary</h3>
           {selectedSeats.length === 0 ? (
-            <div className="text-center py-8 text-gray-500 border border-dashed border-white/10 rounded-xl">
+            <div className="text-center py-8 text-gray-500 border border-dashed border-gray-200 rounded-xl bg-gray-50">
               No seats selected.
             </div>
           ) : (
@@ -171,18 +197,18 @@ export default function SeatMap() {
               {selectedSeats.map(id => {
                 const seat = seats.find(s => s.seat_id === id);
                 return (
-                  <div key={id} className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-gray-200">
+                  <div key={id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
                     <div>
-                      <div className="font-medium text-gray-900">{seat?.row_identifier}{seat?.seat_identifier}</div>
+                      <div className="font-semibold text-gray-900">{seat?.row_identifier}{seat?.seat_identifier}</div>
                       <div className="text-xs text-gray-500">{seat?.category_name}</div>
                     </div>
-                    <span className="font-bold text-indigo-300">₹{seat?.price}</span>
+                    <span className="font-bold text-gray-900">₹{seat?.price}</span>
                   </div>
                 );
               })}
-              <div className="pt-4 mt-4 border-t border-white/10 flex justify-between font-bold text-lg">
-                <span className="text-gray-900">Total</span>
-                <span className="text-indigo-400">
+              <div className="pt-4 mt-4 border-t border-gray-200 flex justify-between font-bold text-lg">
+                <span className="text-gray-900">Total Amount</span>
+                <span className="text-bms-red">
                   ₹{selectedSeats.reduce((sum, id) => {
                     const s = seats.find(st => st.seat_id === id);
                     return sum + (s?.price || 0);
@@ -191,9 +217,9 @@ export default function SeatMap() {
               </div>
               <button 
                 onClick={handleHold}
-                className="w-full mt-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-gray-900 rounded-full font-bold hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-0.5"
+                className="w-full mt-6 py-3.5 bg-bms-red text-white rounded-lg font-bold hover:bg-bms-hover transition-colors"
               >
-                Hold Seats & Checkout
+                Proceed to Pay
               </button>
             </div>
           )}
