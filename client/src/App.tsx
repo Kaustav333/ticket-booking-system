@@ -13,7 +13,7 @@ import BookingHistory from './pages/BookingHistory';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col relative overflow-hidden">
+      <div className="min-h-screen bg-transparent text-gray-900 flex flex-col relative overflow-hidden">
         
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
