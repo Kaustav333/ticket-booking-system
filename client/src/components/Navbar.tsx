@@ -10,10 +10,13 @@ export default function Navbar() {
   const [location, setLocation] = useState('Select Location');
   const [isLocationMenuOpen, setIsLocationMenuOpen] = useState(false);
   const [searchLocationInput, setSearchLocationInput] = useState('');
+  const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
 
   const handleLocationSelect = (loc: string) => {
     setLocation(loc);
     setIsLocationMenuOpen(false);
+    setSearchLocationInput('');
     navigate(`/?location=${loc.toLowerCase()}`);
   };
 
@@ -22,6 +25,38 @@ export default function Navbar() {
       handleLocationSelect(searchLocationInput.trim());
     }
   };
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (!searchLocationInput.trim() || searchLocationInput.length < 3) {
+        setLocationSuggestions([]);
+        return;
+      }
+      setIsSearchingLocation(true);
+      try {
+        const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchLocationInput)}&featuretype=city&limit=5`);
+        const data = await response.json();
+        
+        // Extract unique city names
+        const uniqueCities = Array.from(new Set(data.map((item: any) => {
+          const parts = item.display_name.split(',');
+          return parts[0].trim();
+        })));
+        
+        setLocationSuggestions(uniqueCities.slice(0, 5));
+      } catch (error) {
+        console.error("Error fetching location suggestions:", error);
+      } finally {
+        setIsSearchingLocation(false);
+      }
+    };
+
+    const timerId = setTimeout(() => {
+      fetchSuggestions();
+    }, 500); // 500ms debounce
+
+    return () => clearTimeout(timerId);
+  }, [searchLocationInput]);
 
   useEffect(() => {
     if ('geolocation' in navigator) {
@@ -89,14 +124,14 @@ export default function Navbar() {
 
               {/* Location Dropdown */}
               {isLocationMenuOpen && (
-                <div className="absolute top-8 right-0 w-64 bg-white border border-gray-200 shadow-xl rounded-lg p-4 z-50">
+                <div className="absolute top-8 right-0 w-72 bg-white border border-gray-200 shadow-xl rounded-lg p-4 z-50">
                   <div className="relative mb-4">
                     <svg className="h-4 w-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                     <input 
                       type="text" 
-                      placeholder="Search for your city (Press Enter)"
+                      placeholder="Search for your city..."
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded text-gray-900 focus:outline-none focus:border-bms-red"
                       value={searchLocationInput}
                       onChange={(e) => setSearchLocationInput(e.target.value)}
@@ -104,18 +139,44 @@ export default function Navbar() {
                       autoFocus
                     />
                   </div>
-                  <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Popular Cities</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    {['Mumbai', 'Delhi', 'Bengaluru', 'Sydney', 'Hyderabad', 'Pune'].map(city => (
-                      <div 
-                        key={city}
-                        className="text-sm text-gray-700 hover:text-bms-red cursor-pointer py-1 px-2 rounded hover:bg-gray-50 transition-colors"
-                        onClick={() => handleLocationSelect(city)}
-                      >
-                        {city}
+                  
+                  {searchLocationInput.length > 0 ? (
+                    <div>
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Search Results</div>
+                      {isSearchingLocation ? (
+                        <div className="text-sm text-gray-500 py-2">Searching...</div>
+                      ) : locationSuggestions.length > 0 ? (
+                        <div className="flex flex-col space-y-1">
+                          {locationSuggestions.map((city, idx) => (
+                            <div 
+                              key={idx}
+                              className="text-sm text-gray-700 hover:text-bms-red cursor-pointer py-2 px-2 rounded hover:bg-gray-50 transition-colors"
+                              onClick={() => handleLocationSelect(city as string)}
+                            >
+                              {city}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-gray-500 py-2">No cities found</div>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Popular Cities</div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {['Mumbai', 'Delhi', 'Bengaluru', 'Sydney', 'Hyderabad', 'Pune', 'Guwahati', 'Kolkata'].map(city => (
+                          <div 
+                            key={city}
+                            className="text-sm text-gray-700 hover:text-bms-red cursor-pointer py-1 px-2 rounded hover:bg-gray-50 transition-colors"
+                            onClick={() => handleLocationSelect(city)}
+                          >
+                            {city}
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
