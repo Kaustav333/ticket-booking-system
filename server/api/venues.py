@@ -38,7 +38,7 @@ class SeatLayoutCreate(BaseModel):
     coordinate_y: Optional[float] = None
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_venue(venue: VenueCreate, admin: dict = Depends(require_admin)):
+async def create_venue(venue: VenueCreate, org: dict = Depends(require_organiser)):
     pool = await get_db_pool()
     async with pool.acquire() as conn:
         row = await conn.fetchrow(
@@ -64,7 +64,7 @@ async def get_venue(venue_id: str, org: dict = Depends(require_organiser)):
         return dict(row)
 
 @router.post("/{venue_id}/seats", status_code=status.HTTP_201_CREATED)
-async def create_venue_seats(venue_id: str, seats: List[SeatLayoutCreate], admin: dict = Depends(require_admin)):
+async def create_venue_seats(venue_id: str, seats: List[SeatLayoutCreate], org: dict = Depends(require_organiser)):
     pool = await get_db_pool()
     async with pool.acquire() as conn:
         # Verify venue exists
