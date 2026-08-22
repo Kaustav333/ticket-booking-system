@@ -186,9 +186,9 @@ export default function Navbar() {
               <div className="hidden sm:flex items-center pl-4 space-x-4">
                 <div className="px-3 py-1.5 text-sm font-medium text-gray-700 flex items-center gap-2 cursor-default">
                   <div className="w-6 h-6 rounded-full bg-bms-red flex items-center justify-center text-white text-xs">
-                    {user?.name?.charAt(0).toUpperCase()}
+                    {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                   </div>
-                  {user?.name}
+                  {user?.name || 'User'}
                 </div>
               </div>
             ) : (

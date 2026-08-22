@@ -16,6 +16,7 @@ export default function Signup() {
       await api.post('/auth/register', { name, email, password, role });
       const loginRes = await api.post('/auth/login', { email, password });
       localStorage.setItem('token', loginRes.data.access_token);
+      localStorage.setItem('user', JSON.stringify(loginRes.data.user));
       navigate('/');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Signup failed');
