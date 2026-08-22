@@ -177,5 +177,4 @@ async def fix_real_posters():
             return {"status": "success", "message": f"Updated {updated} events with real movie posters!"}
         except Exception as e:
             return {"status": "error", "message": str(e)}
-#   T r i g g e r   r e b u i l d  
- 
+# Trigger rebuild
