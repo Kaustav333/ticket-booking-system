@@ -183,19 +183,14 @@ export default function Navbar() {
             </div>
 
             {token ? (
-              <>
-                <div className="hidden sm:flex items-center pl-4 space-x-4">
-                  <div className="px-3 py-1.5 text-sm font-medium text-gray-700 flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-bms-red flex items-center justify-center text-white text-xs">
-                      {user?.name?.charAt(0).toUpperCase()}
-                    </div>
-                    {user?.name}
+              <div className="hidden sm:flex items-center pl-4 space-x-4">
+                <div className="px-3 py-1.5 text-sm font-medium text-gray-700 flex items-center gap-2 cursor-default">
+                  <div className="w-6 h-6 rounded-full bg-bms-red flex items-center justify-center text-white text-xs">
+                    {user?.name?.charAt(0).toUpperCase()}
                   </div>
-                  <button onClick={handleLogout} className="text-sm text-gray-500 hover:text-bms-red font-medium transition-colors">Logout</button>
+                  {user?.name}
                 </div>
-                {/* Mobile logout */}
-                <button onClick={handleLogout} className="sm:hidden text-gray-500 hover:text-bms-red font-medium transition-colors">Logout</button>
-              </>
+              </div>
             ) : (
               <div className="space-x-4 flex items-center pl-4">
                 <Link to="/login" className="px-5 py-1.5 rounded-md bg-bms-red text-white text-sm font-medium hover:bg-bms-hover transition-colors">Sign In</Link>
@@ -246,6 +241,20 @@ export default function Navbar() {
                     <Link to="/rewards" onClick={() => setIsHamburgerOpen(false)} className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
                       <span>Rewards</span>
                     </Link>
+                    {token && (
+                      <>
+                        <div className="h-px bg-gray-100 my-1"></div>
+                        <button 
+                          onClick={() => {
+                            setIsHamburgerOpen(false);
+                            handleLogout();
+                          }}
+                          className="w-full text-left px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 transition-colors flex items-center justify-between"
+                        >
+                          <span>Sign Out</span>
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
