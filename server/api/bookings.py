@@ -143,6 +143,16 @@ async def confirm_booking(booking_id: str, req: ConfirmRequest, user: dict = Dep
             
             return {"status": "success", "booking_reference": booking['booking_reference']}
 
+@router.get("/history")
+async def get_booking_history(user: dict = Depends(get_current_user)):
+    pool = await get_db_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            "SELECT id, event_id, booking_reference, status, total_amount, created_at FROM bookings WHERE user_id = $1 ORDER BY created_at DESC",
+            user['sub']
+        )
+        return [dict(row) for row in rows]
+
 @router.get("/{booking_id}")
 async def get_booking(booking_id: str, user: dict = Depends(get_current_user)):
     pool = await get_db_pool()
@@ -173,16 +183,6 @@ async def get_booking(booking_id: str, user: dict = Depends(get_current_user)):
             "expires_at": expires_at,
             "seats": [dict(s) for s in seats]
         }
-
-@router.get("/history")
-async def get_booking_history(user: dict = Depends(get_current_user)):
-    pool = await get_db_pool()
-    async with pool.acquire() as conn:
-        rows = await conn.fetch(
-            "SELECT id, event_id, booking_reference, status, total_amount, created_at FROM bookings WHERE user_id = $1 ORDER BY created_at DESC",
-            user['sub']
-        )
-        return [dict(row) for row in rows]
 
 @router.post("/{booking_id}/cancel")
 async def cancel_booking(booking_id: str, user: dict = Depends(get_current_user)):
