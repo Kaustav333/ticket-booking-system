@@ -97,7 +97,7 @@ async def list_events():
     pool = await get_db_pool()
     async with pool.acquire() as conn:
         rows = await conn.fetch("""
-            SELECT e.*, v.location as venue_location 
+            SELECT e.*, v.location as venue_location, v.name as venue_name 
             FROM events e
             LEFT JOIN venues v ON e.venue_id = v.id
             ORDER BY e.start_time ASC

@@ -12,6 +12,7 @@ interface Event {
   thumbnail_url: string;
   category: string;
   venue_location: string;
+  venue_name: string;
 }
 
 export default function Events() {
@@ -40,15 +41,23 @@ export default function Events() {
   if (categoryFilter) {
     filteredEvents = filteredEvents.filter(e => e.category && e.category.toLowerCase() === categoryFilter.toLowerCase());
   }
+  
+  let isLocationFallback = false;
   if (locationFilter) {
-    filteredEvents = filteredEvents.filter(e => e.venue_location && e.venue_location.toLowerCase() === locationFilter.toLowerCase());
+    const locFiltered = filteredEvents.filter(e => e.venue_location && e.venue_location.toLowerCase() === locationFilter.toLowerCase());
+    if (locFiltered.length > 0) {
+      filteredEvents = locFiltered;
+    } else {
+      isLocationFallback = true;
+      // Show all category-filtered events as fallback
+    }
   }
 
   let displayCategory = categoryFilter 
     ? categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)
     : "Recommended Events";
   
-  if (locationFilter) {
+  if (locationFilter && !isLocationFallback) {
     displayCategory += ` in ${locationFilter.charAt(0).toUpperCase() + locationFilter.slice(1)}`;
   }
 
@@ -76,6 +85,18 @@ export default function Events() {
       </div>
 
       <div>
+        {isLocationFallback && (
+          <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 flex items-start space-x-3">
+            <svg className="h-6 w-6 text-yellow-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div>
+              <h3 className="font-bold">No events found in {locationFilter.charAt(0).toUpperCase() + locationFilter.slice(1)}.</h3>
+              <p className="text-sm mt-1 text-yellow-700">We couldn't find any events matching your location right now. Showing popular events across other cities instead.</p>
+            </div>
+          </div>
+        )}
+
         <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayCategory}</h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -106,11 +127,11 @@ export default function Events() {
               <div className="flex flex-col">
                 <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
                 
-                <p className="text-sm text-gray-500 mt-1">
-                  {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                  {event.venue_name}, {event.venue_location}
                 </p>
-                <p className="text-xs text-gray-400 mt-0.5 uppercase tracking-wide font-medium">
-                  English
+                <p className="text-xs text-gray-400 mt-1 font-medium">
+                  {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                 </p>
               </div>
             </Link>

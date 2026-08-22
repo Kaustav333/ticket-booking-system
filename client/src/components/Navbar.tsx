@@ -216,6 +216,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-10 text-sm">
             <div className="flex space-x-6 text-gray-600">
+              <Link to="/" className="hover:text-gray-900 transition-colors font-semibold">Home</Link>
               <Link to="/?category=movies" className="hover:text-gray-900 transition-colors">Movies</Link>
               <Link to="/?category=stream" className="hover:text-gray-900 transition-colors">Stream</Link>
               <Link to="/?category=events" className="hover:text-gray-900 transition-colors">Events</Link>

@@ -14,7 +14,7 @@ export default function OrganiserDashboard() {
   const [summaries, setSummaries] = useState<Record<string, EventSummary>>({});
   const [venues, setVenues] = useState<any[]>([]);
   
-  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '' });
+  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
   const [newCategory, setNewCategory] = useState({ name: '', price: 0 });
 
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function OrganiserDashboard() {
         end_time: new Date(newEvent.end_time).toISOString(),
       });
       alert('Event created!');
-      setNewEvent({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '' });
+      setNewEvent({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
       fetchEvents();
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to create event');
@@ -121,6 +121,10 @@ export default function OrganiserDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">Payment QR Code Image URL (Optional)</label>
               <input type="url" placeholder="https://..." value={newEvent.payment_qr_url} onChange={e => setNewEvent({...newEvent, payment_qr_url: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Event Poster/Thumbnail URL (Optional)</label>
+              <input type="url" placeholder="https://..." value={newEvent.thumbnail_url} onChange={e => setNewEvent({...newEvent, thumbnail_url: e.target.value})} className="w-full bg-navy-900 border border-white/10 rounded-xl p-3 text-white focus:ring-1 focus:ring-indigo-500 outline-none" />
             </div>
             <button type="submit" className="w-full mt-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full py-3 font-bold hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all transform hover:-translate-y-0.5">Create Event</button>
           </form>
