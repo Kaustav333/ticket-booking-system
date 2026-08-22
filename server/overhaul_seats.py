@@ -1,9 +1,10 @@
+import os
 import asyncio
 import asyncpg
 import random
 
 async def run():
-    conn = await asyncpg.connect('postgresql://postgres.wgvohfyhkfcevnjeizhg:Kaustav4$567$@aws-0-ap-southeast-2.pooler.supabase.com:5432/postgres')
+    conn = await asyncpg.connect(os.getenv('DATABASE_URL'))
     
     # Get all events
     events = await conn.fetch("SELECT id, title, category FROM events")
