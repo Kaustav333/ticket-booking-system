@@ -139,6 +139,7 @@ async def fix_images():
 async def fix_real_posters():
     pool = await get_db_pool()
     import urllib.request
+    import urllib.parse
     import json
     
     async with pool.acquire() as conn:
