@@ -104,16 +104,6 @@ export default function SeatMap() {
     }
   };
 
-  const getSeatColor = (status: string, isSelected: boolean) => {
-    if (isSelected) return 'bg-indigo-500 text-gray-900 shadow-[0_0_15px_rgba(99,102,241,0.6)] border-indigo-400 scale-110 z-10';
-    switch (status) {
-      case 'AVAILABLE': return 'bg-teal-500/20 hover:bg-teal-500/40 border-teal-500/50 text-teal-300 cursor-pointer hover:scale-105';
-      case 'HELD': return 'bg-yellow-500/20 border-yellow-500/50 text-yellow-300 cursor-not-allowed opacity-60';
-      case 'CONFIRMED': return 'bg-red-500/10 border-red-500/20 text-red-500/50 cursor-not-allowed opacity-40';
-      case 'WAITLIST_OFFERED': return 'bg-orange-500/20 border-orange-500/50 text-orange-300 cursor-not-allowed opacity-60';
-      default: return 'bg-gray-800 border-gray-700 text-gray-500';
-    }
-  };
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 pb-12">
