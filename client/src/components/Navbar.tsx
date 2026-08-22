@@ -12,6 +12,7 @@ export default function Navbar() {
   const [searchLocationInput, setSearchLocationInput] = useState('');
   const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
 
   const handleLocationSelect = (loc: string) => {
     setLocation(loc);
@@ -202,10 +203,52 @@ export default function Navbar() {
             )}
             
             {/* Hamburger Icon */}
-            <div className="pl-4 cursor-pointer">
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="pl-4 cursor-pointer relative">
+              <svg 
+                onClick={() => setIsHamburgerOpen(!isHamburgerOpen)}
+                className="w-6 h-6 text-gray-700 hover:text-bms-red transition-colors" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
+
+              {/* Hamburger Dropdown Menu */}
+              {isHamburgerOpen && (
+                <div className="absolute top-10 right-0 w-64 bg-white border border-gray-200 shadow-xl rounded-lg overflow-hidden z-50 animate-in slide-in-from-top-2">
+                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-bold text-gray-900">Hey!</p>
+                  </div>
+                  <div className="flex flex-col py-2">
+                    <Link to="/bookings" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <span>Your Orders</span>
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                    </Link>
+                    <Link to="/events" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <span>ListYourShow</span>
+                      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                    </Link>
+                    {user?.role === 'admin' && (
+                      <Link to="/admin" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    )}
+                    {user?.role === 'organiser' && (
+                      <Link to="/organiser" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                        <span>Organiser Dashboard</span>
+                      </Link>
+                    )}
+                    <div className="h-px bg-gray-100 my-1"></div>
+                    <Link to="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <span>Help & Support</span>
+                    </Link>
+                    <Link to="#" className="px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-bms-red transition-colors flex items-center justify-between">
+                      <span>Rewards</span>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
