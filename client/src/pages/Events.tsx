@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../lib/api';
 
 interface Event {
@@ -10,11 +10,14 @@ interface Event {
   status: string;
   venue_id: string;
   thumbnail_url: string;
+  category: string;
 }
 
 export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
+  const categoryFilter = searchParams.get('category');
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -29,6 +32,15 @@ export default function Events() {
     };
     fetchEvents();
   }, []);
+
+  // Filter events based on URL query param
+  const filteredEvents = categoryFilter 
+    ? events.filter(e => e.category && e.category.toLowerCase() === categoryFilter.toLowerCase())
+    : events;
+
+  const displayCategory = categoryFilter 
+    ? categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)
+    : "Recommended Events";
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
@@ -54,10 +66,10 @@ export default function Events() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Recommended Events</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">{displayCategory}</h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          {events.map((event) => (
+          {filteredEvents.map((event) => (
             <Link to={`/events/${event.id}/seats`} key={event.id} className="group flex flex-col cursor-pointer">
               
               {/* Poster Image */}
@@ -93,9 +105,9 @@ export default function Events() {
               </div>
             </Link>
           ))}
-          {events.length === 0 && (
-            <div className="col-span-full py-20 text-center text-gray-500 bg-white rounded-xl border border-gray-200 border-dashed">
-              No events found. Check back later!
+          {filteredEvents.length === 0 && (
+            <div className="col-span-full py-20 text-center text-gray-500 bg-white/50 backdrop-blur-sm rounded-xl border border-gray-200 border-dashed">
+              No {categoryFilter ? categoryFilter : 'events'} found. Check back later!
             </div>
           )}
         </div>

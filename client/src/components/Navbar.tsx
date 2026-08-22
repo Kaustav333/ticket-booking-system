@@ -100,16 +100,16 @@ export default function Navbar() {
       </div>
 
       {/* Secondary Navbar */}
-      <div className="bg-gray-50 border-t border-gray-200">
+      <div className="bg-gray-50 border-t border-gray-200/60 backdrop-blur-md bg-opacity-90">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-10 text-sm">
             <div className="flex space-x-6 text-gray-600">
-              <Link to="/" className="hover:text-gray-900 transition-colors">Movies</Link>
-              <Link to="/" className="hover:text-gray-900 transition-colors">Stream</Link>
-              <Link to="/events" className="hover:text-gray-900 transition-colors">Events</Link>
-              <Link to="/" className="hover:text-gray-900 transition-colors">Plays</Link>
-              <Link to="/" className="hover:text-gray-900 transition-colors">Sports</Link>
-              <Link to="/" className="hover:text-gray-900 transition-colors">Activities</Link>
+              <Link to="/?category=movies" className="hover:text-gray-900 transition-colors">Movies</Link>
+              <Link to="/?category=stream" className="hover:text-gray-900 transition-colors">Stream</Link>
+              <Link to="/?category=events" className="hover:text-gray-900 transition-colors">Events</Link>
+              <Link to="/?category=plays" className="hover:text-gray-900 transition-colors">Plays</Link>
+              <Link to="/?category=sports" className="hover:text-gray-900 transition-colors">Sports</Link>
+              <Link to="/?category=activities" className="hover:text-gray-900 transition-colors">Activities</Link>
             </div>
             
             <div className="hidden md:flex space-x-6 text-gray-600 text-xs">
