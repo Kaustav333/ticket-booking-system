@@ -34,44 +34,65 @@ async def seed():
     """)
     print(f"Created Venue: {venue_id}")
     
-    # 3. Create an Event
-    start_time = datetime.now() + timedelta(days=7)
-    end_time = start_time + timedelta(hours=3)
-    event_id = await conn.fetchval("""
-        INSERT INTO events (organiser_id, venue_id, title, start_time, end_time)
-        VALUES ($1, $2, 'Coldplay Concert 2026', $3, $4)
-        RETURNING id;
-    """, user_id, venue_id, start_time, end_time)
-    print(f"Created Event: {event_id}")
-    
-    # 4. Create Seat Categories
-    vip_cat_id = await conn.fetchval("""
-        INSERT INTO event_seat_categories (event_id, name, price)
-        VALUES ($1, 'VIP', 250.00)
-        RETURNING id;
-    """, event_id)
-    
-    gen_cat_id = await conn.fetchval("""
-        INSERT INTO event_seat_categories (event_id, name, price)
-        VALUES ($1, 'General', 100.00)
-        RETURNING id;
-    """, event_id)
-    print(f"Created Categories: VIP {vip_cat_id}, General {gen_cat_id}")
-    
-    # 5. Create Seats (2 rows, 5 seats each)
-    seats_data = []
-    for r in range(1, 3):
-        row = chr(64 + r) # A, B
-        cat_id = vip_cat_id if r == 1 else gen_cat_id
-        for s in range(1, 11):
-            seats_data.append((event_id, cat_id, 'Main', row, str(s)))
-            
-    await conn.executemany("""
-        INSERT INTO seats (event_id, category_id, section, row_identifier, seat_identifier)
-        VALUES ($1, $2, $3, $4, $5)
-    """, seats_data)
-    
-    print("Created Seats!")
+    # 3. Create Events
+    events_to_create = [
+        {
+            "title": "Coldplay Music Of The Spheres",
+            "thumbnail_url": "https://images.unsplash.com/photo-1540039155733-d7696d4eb98b?w=600&h=800&fit=crop",
+            "days_offset": 7
+        },
+        {
+            "title": "Zakir Khan Live",
+            "thumbnail_url": "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=600&h=800&fit=crop",
+            "days_offset": 14
+        },
+        {
+            "title": "Spiderman: Brand New Day",
+            "thumbnail_url": "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=600&h=800&fit=crop",
+            "days_offset": 2
+        },
+        {
+            "title": "Hamilton - The Musical",
+            "thumbnail_url": "https://images.unsplash.com/photo-1507676184212-d0c30a3c3738?w=600&h=800&fit=crop",
+            "days_offset": 21
+        }
+    ]
+
+    for evt in events_to_create:
+        start_time = datetime.now() + timedelta(days=evt["days_offset"])
+        end_time = start_time + timedelta(hours=3)
+        event_id = await conn.fetchval("""
+            INSERT INTO events (organiser_id, venue_id, title, start_time, end_time, thumbnail_url, payment_details, payment_qr_url)
+            VALUES ($1, $2, $3, $4, $5, $6, 'Bank: XYZ\nAcc: 123456', 'https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg')
+            RETURNING id;
+        """, user_id, venue_id, evt["title"], start_time, end_time, evt["thumbnail_url"])
+        print(f"Created Event: {evt['title']} ({event_id})")
+        
+        # 4. Create Seat Categories
+        vip_cat_id = await conn.fetchval("""
+            INSERT INTO event_seat_categories (event_id, name, price)
+            VALUES ($1, 'VIP', 250.00)
+            RETURNING id;
+        """, event_id)
+        
+        gen_cat_id = await conn.fetchval("""
+            INSERT INTO event_seat_categories (event_id, name, price)
+            VALUES ($1, 'General', 100.00)
+            RETURNING id;
+        """, event_id)
+        
+        # 5. Create Seats (2 rows, 5 seats each)
+        seats_data = []
+        for r in range(1, 3):
+            row = chr(64 + r) # A, B
+            cat_id = vip_cat_id if r == 1 else gen_cat_id
+            for s in range(1, 11):
+                seats_data.append((event_id, cat_id, 'Main', row, str(s)))
+                
+        await conn.executemany("""
+            INSERT INTO seats (event_id, category_id, section, row_identifier, seat_identifier)
+            VALUES ($1, $2, $3, $4, $5)
+        """, seats_data)
     
     await conn.close()
     print("Seeding Complete.")

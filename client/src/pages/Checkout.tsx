@@ -83,7 +83,7 @@ export default function Checkout() {
       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
     </div>
   );
-  if (error) return <div className="p-8 text-center text-red-400 bg-navy-800 rounded-2xl border border-white/10">{error}</div>;
+  if (error) return <div className="p-8 text-center text-red-400 bg-white rounded-2xl border border-white/10">{error}</div>;
   if (!booking) return null;
 
   const isExpired = timeLeft === 0 || booking.status !== 'HELD';
@@ -94,9 +94,9 @@ export default function Checkout() {
     <div className="max-w-3xl mx-auto p-4 py-8 relative">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-2xl bg-indigo-600/20 rounded-full blur-[100px] z-0 pointer-events-none"></div>
       
-      <div className="bg-navy-800 rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
-        <div className="px-8 py-6 border-b border-white/10 bg-white/5 flex justify-between items-center backdrop-blur-sm">
-          <h1 className="text-2xl font-display font-bold text-white">Checkout</h1>
+      <div className="bg-white rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="px-8 py-6 border-b border-white/10 bg-gray-50 flex justify-between items-center backdrop-blur-sm">
+          <h1 className="text-2xl font-display font-bold text-gray-900">Checkout</h1>
           {booking.status === 'HELD' && timeLeft !== null && (
             <div className={`px-4 py-2 rounded-xl font-mono font-bold text-lg border ${
               isExpired ? 'bg-red-500/10 text-red-400 border-red-500/20' : 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20 shadow-[0_0_15px_rgba(99,102,241,0.2)]'
@@ -108,20 +108,20 @@ export default function Checkout() {
         
         <div className="p-8 space-y-8">
           <div>
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Booking Reference</h3>
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Booking Reference</h3>
             <p className="text-3xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">{booking.booking_reference}</p>
           </div>
           
           <div>
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Selected Seats</h3>
+            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Selected Seats</h3>
             <div className="divide-y divide-white/10 border-t border-b border-white/10">
               {booking.seats.map((seat, idx) => (
                 <div key={idx} className="py-4 flex justify-between items-center group">
                   <div>
-                    <p className="font-bold text-white group-hover:text-indigo-300 transition-colors">Section {seat.section}</p>
-                    <p className="text-sm text-gray-400">Row {seat.row_identifier}, Seat {seat.seat_identifier}</p>
+                    <p className="font-bold text-gray-900 group-hover:text-indigo-300 transition-colors">Section {seat.section}</p>
+                    <p className="text-sm text-gray-500">Row {seat.row_identifier}, Seat {seat.seat_identifier}</p>
                   </div>
-                  <div className="font-bold text-lg text-white">₹{seat.price}</div>
+                  <div className="font-bold text-lg text-gray-900">₹{seat.price}</div>
                 </div>
               ))}
             </div>
@@ -129,7 +129,7 @@ export default function Checkout() {
           
           <div className="flex justify-between items-center pt-2">
             <span className="text-xl font-display font-bold text-gray-300">Total Amount</span>
-            <span className="text-4xl font-display font-extrabold text-white">₹{booking.total_amount}</span>
+            <span className="text-4xl font-display font-extrabold text-gray-900">₹{booking.total_amount}</span>
           </div>
           
           {(eventData?.payment_details || eventData?.payment_qr_url) && (
@@ -160,7 +160,7 @@ export default function Checkout() {
             <button
               onClick={handleConfirm}
               disabled={isExpired || confirming}
-              className={`w-full py-5 rounded-full text-lg font-bold text-white transition-all transform
+              className={`w-full py-5 rounded-full text-lg font-bold text-gray-900 transition-all transform
                 ${isExpired || confirming 
                   ? 'bg-gray-700 cursor-not-allowed opacity-70' 
                   : 'bg-gradient-to-r from-violet-600 to-indigo-600 hover:shadow-[0_0_20px_rgba(99,102,241,0.5)] hover:-translate-y-1'}`}
@@ -168,7 +168,7 @@ export default function Checkout() {
               {isExpired ? 'Hold Expired' : confirming ? 'Processing...' : 'Confirm Booking'}
             </button>
           ) : (
-            <div className="w-full py-5 text-center rounded-full text-lg font-bold bg-white/5 border border-white/10 text-gray-400">
+            <div className="w-full py-5 text-center rounded-full text-lg font-bold bg-gray-50 border border-white/10 text-gray-500">
               Booking is {booking.status}
             </div>
           )}

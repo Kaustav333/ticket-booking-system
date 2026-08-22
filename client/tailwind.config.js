@@ -7,9 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        navy: {
-          800: '#14141F',
-          900: '#0B0B14'
+        bms: {
+          red: '#F84464',
+          hover: '#e03a56'
         }
       },
       fontFamily: {

@@ -9,6 +9,7 @@ interface Event {
   end_time: string;
   status: string;
   venue_id: string;
+  thumbnail_url: string;
 }
 
 export default function Events() {
@@ -31,77 +32,73 @@ export default function Events() {
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bms-red"></div>
     </div>
   );
 
   return (
-    <div className="space-y-12 pb-12">
-      {/* Hero Section */}
-      <div className="relative rounded-3xl overflow-hidden bg-navy-800 border border-white/10 shadow-2xl">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-900/40 via-navy-900/80 to-navy-900 z-0"></div>
-        <div className="relative z-10 px-8 py-16 md:py-24 max-w-3xl flex flex-col items-start">
-          <span className="px-3 py-1 text-xs font-semibold tracking-wider text-indigo-300 uppercase bg-indigo-500/10 border border-indigo-500/20 rounded-full mb-6">
-            Live Experiences
-          </span>
-          <h1 className="text-4xl md:text-6xl font-display font-extrabold text-white leading-tight mb-6">
-            Book your next <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-indigo-400">unforgettable</span> experience
-          </h1>
-          <p className="text-lg text-gray-400 mb-8 max-w-xl">
-            Discover the best concerts, shows, and events happening around you. Secure your seats before they sell out.
-          </p>
+    <div className="space-y-12 pb-12 w-full">
+      {/* Hero Carousel Banner Mockup */}
+      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden rounded-xl group cursor-pointer bg-gray-900">
+        <img 
+          src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&h=400&fit=crop" 
+          alt="Banner" 
+          className="w-full h-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+        />
+        <div className="absolute inset-0 flex flex-col justify-center px-12 md:px-24">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Endless Entertainment<br/>Anytime. Anywhere!</h1>
+          <button className="bg-bms-red text-white px-6 py-2 rounded-md font-medium w-max hover:bg-bms-hover transition-colors">
+            Book Now
+          </button>
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-display font-bold text-white">Upcoming Events</h2>
-      </div>
-      
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {events.map((event) => (
-          <div key={event.id} className="group relative bg-navy-800 overflow-hidden shadow-lg rounded-2xl border border-white/5 hover:border-indigo-500/50 hover:shadow-[0_0_30px_rgba(99,102,241,0.15)] transition-all duration-300 hover:-translate-y-1 flex flex-col">
-            
-            {/* Poster Gradient Placeholder */}
-            <div className="h-40 w-full bg-gradient-to-br from-violet-600/80 to-indigo-900/80 relative">
-              <div className="absolute inset-0 bg-noise opacity-20 mix-blend-overlay"></div>
-              <div className="absolute top-4 right-4">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm backdrop-blur-md ${
-                  event.status === 'AVAILABLE' ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 
-                  'bg-white/10 text-white border border-white/20'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full mr-1.5 ${event.status === 'AVAILABLE' ? 'bg-green-400' : 'bg-gray-400'}`}></span>
-                  {event.status}
-                </span>
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Recommended Events</h2>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {events.map((event) => (
+            <Link to={`/events/${event.id}/seats`} key={event.id} className="group flex flex-col cursor-pointer">
+              
+              {/* Poster Image */}
+              <div className="w-full aspect-[2/3] rounded-lg overflow-hidden relative shadow-sm mb-3">
+                {event.thumbnail_url ? (
+                  <img src={event.thumbnail_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <span className="text-gray-400">No Image</span>
+                  </div>
+                )}
+                
+                {/* Status Badge */}
+                <div className="absolute top-2 right-2">
+                  <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase ${
+                    event.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {event.status}
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="px-5 py-6 flex-1 flex flex-col">
-              <h3 className="text-xl font-bold text-white mb-2 line-clamp-1">{event.title}</h3>
-              
-              <div className="flex items-center text-sm text-gray-400 mb-4">
-                <svg className="h-4 w-4 mr-2 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+              {/* Event Details */}
+              <div className="flex flex-col">
+                <h3 className="text-lg font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
+                
+                <p className="text-sm text-gray-500 mt-1">
+                  {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                </p>
+                <p className="text-xs text-gray-400 mt-0.5 uppercase tracking-wide font-medium">
+                  English
+                </p>
               </div>
-              
-              <div className="mt-auto pt-6">
-                <Link 
-                  to={`/events/${event.id}/seats`} 
-                  className="w-full flex justify-center items-center px-4 py-3 border border-transparent shadow-sm text-sm font-bold rounded-full text-white bg-gradient-to-r from-violet-600 to-indigo-600 hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all"
-                >
-                  View Seats
-                </Link>
-              </div>
+            </Link>
+          ))}
+          {events.length === 0 && (
+            <div className="col-span-full py-20 text-center text-gray-500 bg-white rounded-xl border border-gray-200 border-dashed">
+              No events found. Check back later!
             </div>
-          </div>
-        ))}
-        {events.length === 0 && (
-          <div className="col-span-full text-center py-20 text-gray-400 bg-navy-800/50 rounded-2xl border border-dashed border-white/10">
-            No events found. Check back later!
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ class EventCreate(BaseModel):
     end_time: datetime
     payment_details: str | None = None
     payment_qr_url: str | None = None
+    thumbnail_url: str | None = None
 
 class EventCategoryCreate(BaseModel):
     name: str
@@ -27,10 +28,10 @@ async def create_event(event: EventCreate, org: dict = Depends(require_organiser
             # Create event
             evt_row = await conn.fetchrow(
                 """
-                INSERT INTO events (organiser_id, venue_id, title, start_time, end_time, payment_details, payment_qr_url)
-                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *
+                INSERT INTO events (organiser_id, venue_id, title, start_time, end_time, payment_details, payment_qr_url, thumbnail_url)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
                 """,
-                org['sub'], event.venue_id, event.title, event.start_time, event.end_time, event.payment_details, event.payment_qr_url
+                org['sub'], event.venue_id, event.title, event.start_time, event.end_time, event.payment_details, event.payment_qr_url, event.thumbnail_url
             )
             event_id = evt_row['id']
             

@@ -41,6 +41,9 @@ CREATE TABLE events (
     title VARCHAR NOT NULL,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
+    payment_details VARCHAR,
+    payment_qr_url VARCHAR,
+    thumbnail_url VARCHAR,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 CREATE INDEX idx_events_organiser ON events(organiser_id);

@@ -13,11 +13,7 @@ import BookingHistory from './pages/BookingHistory';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-navy-900 text-gray-100 flex flex-col relative overflow-hidden">
-        {/* Background Noise & Glow */}
-        <div className="absolute inset-0 bg-noise z-0 pointer-events-none mix-blend-overlay"></div>
-        <div className="absolute -top-[500px] -right-[500px] w-[1000px] h-[1000px] bg-indigo-600/20 rounded-full blur-[120px] z-0 pointer-events-none"></div>
-        <div className="absolute -bottom-[500px] -left-[500px] w-[1000px] h-[1000px] bg-violet-600/10 rounded-full blur-[120px] z-0 pointer-events-none"></div>
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col relative overflow-hidden">
         
         <div className="relative z-10 flex flex-col min-h-screen">
           <Navbar />
