@@ -70,7 +70,7 @@ export default function Events() {
   return (
     <div className="space-y-12 pb-12 w-full">
       {/* Hero Carousel Banner Mockup */}
-      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden rounded-xl group cursor-pointer bg-gray-900">
+      <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden rounded-xl group cursor-pointer bg-gray-900 mt-6">
         <img 
           src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=1600&h=400&fit=crop" 
           alt="Banner" 
