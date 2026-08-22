@@ -2,11 +2,34 @@ import { useState } from 'react';
 
 export default function Support() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setLoading(true);
+    try {
+      await fetch("https://formsubmit.co/ajax/kaustavkalita9954@gmail.com", {
+        method: "POST",
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      setSubmitted(true);
+      setFormData({ name: '', email: '', message: '' });
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch (err) {
+      alert("Failed to send message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,18 +51,18 @@ export default function Support() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input type="text" required className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red" />
+                <input type="text" name="name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" required className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red" />
+                <input type="email" name="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} required className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Issue / Query</label>
-                <textarea required rows={4} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red"></textarea>
+                <textarea name="message" value={formData.message} onChange={e => setFormData({...formData, message: e.target.value})} required rows={4} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:outline-none focus:border-bms-red"></textarea>
               </div>
-              <button type="submit" className="w-full bg-bms-red text-white font-bold py-3 rounded-xl hover:bg-bms-hover transition-colors">
-                Send Message
+              <button type="submit" disabled={loading} className="w-full bg-bms-red text-white font-bold py-3 rounded-xl hover:bg-bms-hover transition-colors disabled:opacity-50">
+                {loading ? 'Sending...' : 'Send Message'}
               </button>
             </form>
           )}
