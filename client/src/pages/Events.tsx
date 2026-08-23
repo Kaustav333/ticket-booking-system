@@ -136,8 +136,8 @@ export default function Events() {
       
       {/* Poster Image */}
       <div className="w-full aspect-[2/3] rounded-xl overflow-hidden relative shadow-sm mb-3">
-        {event.thumbnail_url ? (
-          <img src={event.thumbnail_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        {true ? (
+          <img src={`https://picsum.photos/seed/${event.title.replace(/\s+/g, '')}/600/800`} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             <span className="text-gray-400">No Image</span>
