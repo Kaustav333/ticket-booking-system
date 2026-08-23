@@ -3,6 +3,49 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import api from '../lib/api';
 
+const CITY_COORDINATES: Record<string, { lat: number, lon: number }> = {
+  mumbai: { lat: 19.0760, lon: 72.8777 },
+  delhi: { lat: 28.7041, lon: 77.1025 },
+  bengaluru: { lat: 12.9716, lon: 77.5946 },
+  chennai: { lat: 13.0827, lon: 80.2707 },
+  kolkata: { lat: 22.5726, lon: 88.3639 },
+  hyderabad: { lat: 17.3850, lon: 78.4867 },
+  pune: { lat: 18.5204, lon: 73.8567 },
+  guwahati: { lat: 26.1445, lon: 91.7362 },
+  ahmedabad: { lat: 23.0225, lon: 72.5714 },
+  jaipur: { lat: 26.9124, lon: 75.7873 },
+  surat: { lat: 21.1702, lon: 72.8311 },
+  lucknow: { lat: 26.8467, lon: 80.9462 },
+  kanpur: { lat: 26.4499, lon: 80.3319 },
+  nagpur: { lat: 21.1458, lon: 79.0882 },
+  indore: { lat: 22.7196, lon: 75.8577 },
+  thane: { lat: 19.2183, lon: 72.9781 },
+  bhopal: { lat: 23.2599, lon: 77.4126 },
+  visakhapatnam: { lat: 17.6868, lon: 83.2185 },
+  patna: { lat: 25.5941, lon: 85.1376 },
+  vadodara: { lat: 22.3072, lon: 73.1812 },
+  ghaziabad: { lat: 28.6692, lon: 77.4538 },
+  ludhiana: { lat: 30.9010, lon: 75.8523 },
+  agra: { lat: 27.1767, lon: 78.0081 },
+  nashik: { lat: 20.0110, lon: 73.7902 },
+  faridabad: { lat: 28.4089, lon: 77.3178 },
+  meerut: { lat: 28.9845, lon: 77.7064 },
+  rajkot: { lat: 22.3039, lon: 70.8022 },
+  kalyan: { lat: 19.2403, lon: 73.1305 },
+  vasai: { lat: 19.3919, lon: 72.8397 },
+  varanasi: { lat: 25.3176, lon: 83.0034 },
+  sydney: { lat: -33.8688, lon: 151.2093 }
+};
+
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
 interface Event {
   id: string;
   title: string;
@@ -45,13 +88,41 @@ export default function Events() {
   }
   
   let isLocationFallback = false;
+  let fallbackCityName = '';
+  let fallbackDistance = 0;
+
   if (locationFilter) {
     const locFiltered = filteredEvents.filter(e => e.venue_location && e.venue_location.toLowerCase() === locationFilter.toLowerCase());
     if (locFiltered.length > 0) {
       filteredEvents = locFiltered;
     } else {
       isLocationFallback = true;
-      // Show all category-filtered events as fallback
+      
+      const targetCityCoords = CITY_COORDINATES[locationFilter.toLowerCase()];
+      if (targetCityCoords) {
+        // Find all unique cities we HAVE events for
+        const availableCities = Array.from(new Set(filteredEvents.map(e => e.venue_location?.toLowerCase()).filter(Boolean)));
+        
+        let nearestCity = '';
+        let minDistance = Infinity;
+
+        availableCities.forEach(city => {
+          const coords = CITY_COORDINATES[city as string];
+          if (coords) {
+            const dist = getDistance(targetCityCoords.lat, targetCityCoords.lon, coords.lat, coords.lon);
+            if (dist < minDistance) {
+              minDistance = dist;
+              nearestCity = city as string;
+            }
+          }
+        });
+
+        if (nearestCity) {
+          filteredEvents = filteredEvents.filter(e => e.venue_location?.toLowerCase() === nearestCity);
+          fallbackCityName = nearestCity.charAt(0).toUpperCase() + nearestCity.slice(1);
+          fallbackDistance = Math.round(minDistance);
+        }
+      }
     }
   }
 
@@ -164,7 +235,11 @@ export default function Events() {
             </svg>
             <div>
               <h3 className="font-bold">No events found in {locationFilter?.charAt(0).toUpperCase() + (locationFilter?.slice(1) || '')}.</h3>
-              <p className="text-sm mt-1 text-yellow-700">We couldn't find any events matching your location right now. Showing popular events across other cities instead.</p>
+              <p className="text-sm mt-1 text-yellow-700">
+                {fallbackCityName 
+                  ? `Showing nearest shows in ${fallbackCityName} (approx. ${fallbackDistance} km away).`
+                  : "We couldn't find any events matching your location right now. Showing popular events across other cities instead."}
+              </p>
             </div>
           </div>
         )}
