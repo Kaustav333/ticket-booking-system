@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
-
+import api from '../lib/api';
 export default function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -13,7 +13,20 @@ export default function Navbar() {
   const [locationSuggestions, setLocationSuggestions] = useState<any[]>([]);
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
   const [isHamburgerOpen, setIsHamburgerOpen] = useState(false);
+  const [categories, setCategories] = useState<string[]>(['Movies', 'Stream', 'Events', 'Plays', 'Sports', 'Activities']);
 
+  useEffect(() => {
+    api.get('/events')
+      .then(res => {
+        if (res.data && Array.isArray(res.data)) {
+          const uniqueCats = Array.from(new Set(res.data.map((e: any) => e.category).filter(Boolean))) as string[];
+          if (uniqueCats.length > 0) {
+            setCategories(uniqueCats);
+          }
+        }
+      })
+      .catch(err => console.error("Failed to fetch categories for navbar", err));
+  }, []);
   const handleLocationSelect = (loc: string) => {
     setLocation(loc);
     setIsLocationMenuOpen(false);
@@ -278,12 +291,9 @@ export default function Navbar() {
           <div className="flex justify-between items-center h-10 text-sm">
             <div className="flex space-x-6 text-gray-600">
               <Link to="/" className="hover:text-gray-900 transition-colors font-semibold">Home</Link>
-              <Link to="/?category=movies" className="hover:text-gray-900 transition-colors">Movies</Link>
-              <Link to="/?category=stream" className="hover:text-gray-900 transition-colors">Stream</Link>
-              <Link to="/?category=events" className="hover:text-gray-900 transition-colors">Events</Link>
-              <Link to="/?category=plays" className="hover:text-gray-900 transition-colors">Plays</Link>
-              <Link to="/?category=sports" className="hover:text-gray-900 transition-colors">Sports</Link>
-              <Link to="/?category=activities" className="hover:text-gray-900 transition-colors">Activities</Link>
+              {categories.map(cat => (
+                <Link key={cat} to={`/?category=${cat.toLowerCase()}`} className="hover:text-gray-900 transition-colors">{cat}</Link>
+              ))}
             </div>
             
             <div className="hidden md:flex space-x-6 text-gray-600 text-xs">
