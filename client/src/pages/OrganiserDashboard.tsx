@@ -14,7 +14,7 @@ export default function OrganiserDashboard() {
   const [summaries, setSummaries] = useState<Record<string, EventSummary>>({});
   const [venues, setVenues] = useState<any[]>([]);
   
-  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
+  const [newEvent, setNewEvent] = useState({ venue_id: '', title: '', category: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
   const [newCategory, setNewCategory] = useState({ name: '', price: 0 });
   const [newVenue, setNewVenue] = useState({ name: '', location: '', capacity: '' });
 
@@ -89,7 +89,7 @@ export default function OrganiserDashboard() {
         end_time: new Date(newEvent.end_time).toISOString(),
       });
       alert('Event created!');
-      setNewEvent({ venue_id: '', title: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
+      setNewEvent({ venue_id: '', title: '', category: '', start_time: '', end_time: '', payment_details: '', payment_qr_url: '', thumbnail_url: '' });
       fetchEvents();
     } catch (err: any) {
       alert(err.response?.data?.detail || 'Failed to create event');
@@ -150,6 +150,10 @@ export default function OrganiserDashboard() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Event Title</label>
                 <input type="text" required value={newEvent.title} onChange={e => setNewEvent({...newEvent, title: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:border-bms-red focus:ring-1 focus:ring-bms-red outline-none" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Category (e.g. Concert, Comedy)</label>
+                <input type="text" required value={newEvent.category} onChange={e => setNewEvent({...newEvent, category: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:border-bms-red focus:ring-1 focus:ring-bms-red outline-none" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Select Venue</label>

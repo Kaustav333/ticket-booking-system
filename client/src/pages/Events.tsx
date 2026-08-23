@@ -65,12 +65,10 @@ const EventCard = ({ event }: { event: Event }) => (
     
     {/* Poster Image */}
     <div className="w-full aspect-[2/3] rounded-xl overflow-hidden relative shadow-sm mb-3">
-      {true ? (
-        <img src={`https://picsum.photos/seed/${event.title.replace(/\s+/g, '')}/600/800`} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      {event.thumbnail_url && !event.thumbnail_url.includes('media-amazon') && !event.thumbnail_url.includes('ebayimg') ? (
+        <img src={event.thumbnail_url} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
       ) : (
-        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-          <span className="text-gray-400">No Image</span>
-        </div>
+        <img src={`https://picsum.photos/seed/${event.title.replace(/\s+/g, '')}/600/800`} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
       )}
       
       {/* Status Badge */}
