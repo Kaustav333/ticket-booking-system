@@ -42,7 +42,8 @@ export default function SeatMap() {
     };
     if (eventId) fetchSeats();
 
-    socketRef.current = io('http://localhost:8000', { path: '/socket.io' });
+    const baseUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:8000';
+    socketRef.current = io(baseUrl, { path: '/socket.io' });
     
     socketRef.current.on('connect', () => {
       socketRef.current?.emit('join_event_room', { event_id: eventId });
