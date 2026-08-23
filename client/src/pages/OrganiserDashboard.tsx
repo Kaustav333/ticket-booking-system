@@ -126,6 +126,17 @@ export default function OrganiserDashboard() {
     }
   };
 
+  const handleQrUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewEvent({ ...newEvent, payment_qr_url: reader.result as string });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-4 py-8 space-y-8 pb-12">
       <h1 className="text-3xl font-display font-bold text-gray-900 mb-8">Organiser Dashboard</h1>
@@ -190,8 +201,16 @@ export default function OrganiserDashboard() {
                 <textarea placeholder="e.g. Account No, IFSC, UPI" value={newEvent.payment_details} onChange={e => setNewEvent({...newEvent, payment_details: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:border-bms-red focus:ring-1 focus:ring-bms-red outline-none" rows={2} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Payment QR URL (Optional)</label>
-                <input type="url" placeholder="https://..." value={newEvent.payment_qr_url} onChange={e => setNewEvent({...newEvent, payment_qr_url: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-gray-900 focus:border-bms-red focus:ring-1 focus:ring-bms-red outline-none" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Payment QR Code (Optional)</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleQrUpload} 
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl p-2 text-gray-900 focus:border-bms-red focus:ring-1 focus:ring-bms-red outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-bms-red hover:file:bg-red-100" 
+                />
+                {newEvent.payment_qr_url && (
+                  <div className="mt-2 text-xs text-green-600 font-semibold">✓ QR Code selected</div>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Thumbnail Poster</label>
