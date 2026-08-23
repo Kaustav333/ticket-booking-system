@@ -3,7 +3,7 @@ uvicorn[standard]
 asyncpg
 python-socketio
 apscheduler
-bcrypt
+bcrypt==3.2.2
 pyjwt
 qrcode[pil]
 python-multipart
