@@ -60,6 +60,89 @@ interface Event {
   average_rating: number | null;
 }
 
+const EventCard = ({ event }: { event: Event }) => (
+  <Link to={`/events/${event.id}/seats`} className="group flex flex-col cursor-pointer h-full">
+    
+    {/* Poster Image */}
+    <div className="w-full aspect-[2/3] rounded-xl overflow-hidden relative shadow-sm mb-3">
+      {true ? (
+        <img src={`https://picsum.photos/seed/${event.title.replace(/\s+/g, '')}/600/800`} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+      ) : (
+        <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+          <span className="text-gray-400">No Image</span>
+        </div>
+      )}
+      
+      {/* Status Badge */}
+      <div className="absolute top-2 right-2">
+        <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase ${
+          event.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+        }`}>
+          {event.status}
+        </span>
+      </div>
+
+      {/* Rating Badge */}
+      {event.average_rating && (
+        <div className="absolute bottom-2 right-2 bg-gray-900/80 backdrop-blur-sm text-white px-2 py-1 rounded-md flex items-center space-x-1">
+          <Star className="w-3 h-3 text-bms-red fill-current" />
+          <span className="text-xs font-bold">{event.average_rating.toFixed(1)}</span>
+        </div>
+      )}
+    </div>
+
+    {/* Event Details */}
+    <div className="flex flex-col">
+      <h3 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
+      
+      <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+        {event.category || 'Event'} • {event.venue_location}
+      </p>
+      <p className="text-xs text-gray-400 mt-1 font-medium">
+        {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+      </p>
+    </div>
+  </Link>
+);
+
+const EventSection = ({ title, subtitle, eventsList }: { title: string, subtitle?: string, eventsList: Event[] }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  if (eventsList.length === 0) return null;
+  return (
+    <div className="space-y-4 pt-6">
+      <div className="flex justify-between items-end">
+        <div>
+          <h2 className="text-2xl font-display font-bold text-gray-900">{title}</h2>
+          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+        </div>
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-bms-red text-sm font-semibold hover:underline flex items-center"
+        >
+          {isExpanded ? 'Collapse' : 'See All'} <span className="ml-1">{isExpanded ? '‹' : '›'}</span>
+        </button>
+      </div>
+      
+      {isExpanded ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 pb-6 pt-2">
+          {eventsList.map((event) => (
+            <EventCard key={event.id} event={event} />
+          ))}
+        </div>
+      ) : (
+        <div className="flex overflow-x-auto space-x-6 pb-6 pt-2 scrollbar-hide snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {eventsList.map((event) => (
+            <div key={event.id} className="snap-start shrink-0 w-[200px]">
+              <EventCard event={event} />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,75 +214,7 @@ export default function Events() {
   const recommended = filteredEvents.filter(e => e.category !== 'Movie' && (!e.average_rating || e.average_rating < 8.5));
   const topPicks = [...filteredEvents].sort((a, b) => (b.average_rating || 0) - (a.average_rating || 0)).slice(0, 10); // Top 10 highest rated
 
-  const EventCard = ({ event }: { event: Event }) => (
-    <Link to={`/events/${event.id}/seats`} className="group flex flex-col cursor-pointer min-w-[200px] max-w-[240px] flex-shrink-0">
-      
-      {/* Poster Image */}
-      <div className="w-full aspect-[2/3] rounded-xl overflow-hidden relative shadow-sm mb-3">
-        {true ? (
-          <img src={`https://picsum.photos/seed/${event.title.replace(/\s+/g, '')}/600/800`} alt={event.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-        ) : (
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400">No Image</span>
-          </div>
-        )}
-        
-        {/* Status Badge */}
-        <div className="absolute top-2 right-2">
-          <span className={`inline-flex items-center px-2 py-1 rounded text-[10px] font-bold uppercase ${
-            event.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-          }`}>
-            {event.status}
-          </span>
-        </div>
 
-        {/* Rating Badge */}
-        {event.average_rating && (
-          <div className="absolute bottom-2 right-2 bg-gray-900/80 backdrop-blur-sm text-white px-2 py-1 rounded-md flex items-center space-x-1">
-            <Star className="w-3 h-3 text-bms-red fill-current" />
-            <span className="text-xs font-bold">{event.average_rating.toFixed(1)}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Event Details */}
-      <div className="flex flex-col">
-        <h3 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-bms-red transition-colors">{event.title}</h3>
-        
-        <p className="text-xs text-gray-500 mt-1 line-clamp-1">
-          {event.category || 'Event'} • {event.venue_location}
-        </p>
-        <p className="text-xs text-gray-400 mt-1 font-medium">
-          {new Date(event.start_time).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
-        </p>
-      </div>
-    </Link>
-  );
-
-  const EventSection = ({ title, subtitle, eventsList }: { title: string, subtitle?: string, eventsList: Event[] }) => {
-    if (eventsList.length === 0) return null;
-    return (
-      <div className="space-y-4 pt-6">
-        <div className="flex justify-between items-end">
-          <div>
-            <h2 className="text-2xl font-display font-bold text-gray-900">{title}</h2>
-            {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
-          </div>
-          <button className="text-bms-red text-sm font-semibold hover:underline flex items-center">
-            See All <span className="ml-1">›</span>
-          </button>
-        </div>
-        
-        <div className="flex overflow-x-auto space-x-6 pb-6 pt-2 scrollbar-hide snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {eventsList.map((event) => (
-            <div key={event.id} className="snap-start">
-              <EventCard event={event} />
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
 
   if (loading) return (
     <div className="flex justify-center items-center h-64">
